@@ -4,6 +4,6 @@ namespace FormsMvvm.Abstract
 {
     public interface IMvfForm
     {
-        Control.ControlCollection ControlCollection { get; set; }
+        Control.ControlCollection Controls { get; set; }
     }
 }
