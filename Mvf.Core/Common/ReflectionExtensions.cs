@@ -4,13 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Mvf.Core.Attributes;
-using Mvf.Core.Model;
 
 namespace Mvf.Core.Common
 {
     public static class ReflectionExtensions
     {
-        public static IEnumerable<PropertyInfo> WhereHaveValues(this IEnumerable<PropertyInfo> collection, object sourceObject)
+        public static IEnumerable<PropertyInfo> HavingValues(this IEnumerable<PropertyInfo> collection, object sourceObject)
         {
             var result = collection.Where(x =>
             {
@@ -21,7 +20,7 @@ namespace Mvf.Core.Common
             return result;
         }
 
-        public static IEnumerable<PropertyInfo> WhereHaveBindabableAttribute(this IEnumerable<PropertyInfo> collection)
+        public static IEnumerable<PropertyInfo> HavingBindableAttribute(this IEnumerable<PropertyInfo> collection)
         {
             var result = collection.Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(MvfBindable) ||
                                                                            a.AttributeType == typeof(MvfConvert)));

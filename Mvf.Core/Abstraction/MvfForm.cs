@@ -100,8 +100,8 @@ namespace Mvf.Core.Abstraction
         {
             var viewModelProperties = ViewModel.GetType()
                 .GetProperties()
-                .WhereHaveBindabableAttribute()
-                .WhereHaveValues(ViewModel)
+                .HavingBindableAttribute()
+                .HavingValues(ViewModel)
                 .ToList();
 
             foreach (Control control in Controls)

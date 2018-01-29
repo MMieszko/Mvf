@@ -17,6 +17,7 @@ namespace Mvf.Core.Common
             this.ControlName = controlName;
             this.ViewModelPropertyName = propertyName;
             this.Value = value;
+            this.CallerName = callerName;
             this.Converter = converter;
         }
 

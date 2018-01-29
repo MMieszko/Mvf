@@ -44,9 +44,6 @@
   <ItemGroup>
     <Compile Include="Abstraction\IMvfForm.cs" />
     <Compile Include="Abstraction\IMvfViewModel.cs" />
-    <Compile Include="Abstraction\MvfBindingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Abstraction\MvfForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -56,14 +53,13 @@
     <Compile Include="Attributes\MvfConvert.cs" />
     <Compile Include="Common\BindingEventArgs.cs" />
     <Compile Include="Common\BindingType.cs" />
-    <Compile Include="Common\ControlFactory.cs" />
     <Compile Include="Common\MvfException.cs" />
     <Compile Include="Common\ObjectExtensions.cs" />
     <Compile Include="Common\ReflectionExtensions.cs" />
     <Compile Include="Abstraction\MvfValueConverter.cs" />
     <Compile Include="Extensions\ControlsExtensions.cs" />
     <Compile Include="Locator\MvfLocator.cs" />
-    <Compile Include="Model\MvfBindingDetails.cs" />
+    <Compile Include="Common\MvfBindingDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

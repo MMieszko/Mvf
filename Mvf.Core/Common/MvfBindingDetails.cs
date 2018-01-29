@@ -1,6 +1,6 @@
 ﻿using Mvf.Core.Attributes;
 
-namespace Mvf.Core.Model
+namespace Mvf.Core.Common
 {
     public class MvfBindingDetails
     {
