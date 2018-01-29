@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FormsMvvm.Attributes
+namespace Mvf.Core.Attributes
 {
     public class MvfBindableForm : Attribute
     {

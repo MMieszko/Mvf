@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using FormsMvvm.Common;
-using FormsMvvm.Exceptions;
+using Mvf.Core.Common;
 
-
-namespace FormsMvvm.Abstract
+namespace Mvf.Core.Abstraction
 {
     public abstract class MvfViewModel : IMvfViewModel
     {

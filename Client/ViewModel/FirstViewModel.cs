@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Drawing;
 using System.Threading.Tasks;
-using FormsMvvm.Abstract;
-using FormsMvvm.Attributes;
-using FormsMvvm.Attributes.Bindings;
+using Mvf.Core.Abstraction;
+using Mvf.Core.Attributes;
 
-namespace Client
+namespace Client.ViewModel
 {
     public class FirstViewModel : MvfViewModel
     {

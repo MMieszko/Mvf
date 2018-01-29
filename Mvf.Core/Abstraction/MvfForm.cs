@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using Mvf.Core.Attributes;
+using Mvf.Core.Common;
+using Mvf.Core.Extensions;
+using Mvf.Core.Locator;
 
-using FormsMvvm.Attributes;
-using FormsMvvm.Common;
-using FormsMvvm.Converters;
-using FormsMvvm.Exceptions;
-using FormsMvvm.Extensions;
-using FormsMvvm.Locator;
-
-namespace FormsMvvm.Abstract
+namespace Mvf.Core.Abstraction
 {
     public abstract class MvfForm<TViewModel> : Form, IMvfForm
         where TViewModel : IMvfViewModel
@@ -44,9 +41,9 @@ namespace FormsMvvm.Abstract
 
         public virtual void OnViewModelSet()
         {
-            throw new NotImplementedException();
+
         }
-        
+
         private bool CanBind(BindingType type, string viewModelPropertyName)
         {
             switch (type)
@@ -72,7 +69,7 @@ namespace FormsMvvm.Abstract
 
                 try
                 {
-                    var value = MvfConverter.GetConvertedValue(e.Converter, e.Value);
+                    var value = MvfValueConverter.GetConvertedValue(e.Converter, e.Value);
                     controlProprty.SetValue(control, value, null);
                     _bindingHistory.Add(e.ViewModelPropertyName);
                 }
@@ -118,7 +115,7 @@ namespace FormsMvvm.Abstract
                     control.Invoke(new Action(() =>
                     {
                         var controlProprty = control.GetProperty(binding.ProprtyName());
-                        controlProprty.SetValue(control, MvfConverter.GetConvertedValue(binding.Converter(), binding.Value(ViewModel), true), null);
+                        controlProprty.SetValue(control, MvfValueConverter.GetConvertedValue(binding.Converter(), binding.Value(ViewModel), true), null);
                     }));
                 }
             }

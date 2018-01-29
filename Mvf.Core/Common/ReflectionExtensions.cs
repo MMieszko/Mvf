@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using FormsMvvm.Attributes;
-using FormsMvvm.Attributes.Bindings;
-using FormsMvvm.Converters;
-using FormsMvvm.Model;
+using Mvf.Core.Attributes;
+using Mvf.Core.Model;
 
-namespace FormsMvvm.Exceptions
+namespace Mvf.Core.Common
 {
     public static class ReflectionExtensions
     {

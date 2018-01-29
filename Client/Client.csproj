@@ -45,17 +45,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FirstViewModel.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="Forms\FirstViewModelForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="ViewModel\FirstViewModel.cs" />
+    <Compile Include="Forms\Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="MyFirstConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="Forms\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -81,9 +84,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FormsMvvm\FormsMvvm.csproj">
-      <Project>{c4aa010f-f47f-4555-81a0-5d670b20a0bf}</Project>
-      <Name>FormsMvvm</Name>
+    <ProjectReference Include="..\Mvf.Core\Mvf.Core.csproj">
+      <Project>{B9648E90-48CA-4BDC-9E48-E075C37108B3}</Project>
+      <Name>Mvf.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

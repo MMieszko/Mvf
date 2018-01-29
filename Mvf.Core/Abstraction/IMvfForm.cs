@@ -1,4 +1,4 @@
-﻿namespace FormsMvvm.Abstract
+﻿namespace Mvf.Core.Abstraction
 {
     public interface IMvfForm
     {

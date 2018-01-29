@@ -52,27 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstract\IMvfForm.cs" />
-    <Compile Include="Abstract\MvfBindingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Attributes\MvfBindableForm.cs" />
-    <Compile Include="Attributes\Bindings\MvfBindable.cs" />
-    <Compile Include="Attributes\MvfConvert.cs" />
-    <Compile Include="Common\BindingEventArgs.cs" />
-    <Compile Include="Common\BindingType.cs" />
-    <Compile Include="Common\ControlFactory.cs" />
-    <Compile Include="Converters\MvfValueConverter.cs" />
-    <Compile Include="Exceptions\MvfException.cs" />
-    <Compile Include="Exceptions\ObjectExtensions.cs" />
-    <Compile Include="Exceptions\ReflectionExtensions.cs" />
-    <Compile Include="Extensions\ControlsExtensions.cs" />
-    <Compile Include="Abstract\MvfViewModel.cs" />
-    <Compile Include="Abstract\MvfForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Locator\MvfFormsLocator.cs" />
-    <Compile Include="Model\MvfBindingDetails.cs" />
+    <Compile Include="MvfConverter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
