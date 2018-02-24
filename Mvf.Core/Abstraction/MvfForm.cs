@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+
 using Mvf.Core.Attributes;
 using Mvf.Core.Common;
 using Mvf.Core.Extensions;
@@ -14,119 +15,67 @@ namespace Mvf.Core.Abstraction
         where TViewModel : IMvfViewModel
     {
         protected TViewModel ViewModel;
-        private readonly List<string> _bindingHistory;
+        protected IReadOnlyCollection<PropertyInfo> BindableProperties { get; private set; }
+        protected MvfBindingDispatcher<TViewModel> BindingDispatcher { get; private set; }
+        protected event EventHandler<TViewModel> ViewModelSet;
 
         protected MvfForm()
         {
-            _bindingHistory = new List<string>();
-            MvfInit();
+            base.Load += OnViewInitialized;
         }
 
-        private void MvfInit()
+        protected virtual void OnViewInitialized(object sender, EventArgs eventArgs)
         {
             InitializeViewModel();
-            InitializeBindings();
-            InitializeEvents();
+            InitializeControls();
+            InitializeStartupBindings();
         }
-
-        public virtual void OnLoad()
+        
+        protected virtual void OnViewModelPropertyChanged(object sender, BindingEventArgs e)
         {
-            //MvfInit();
-        }
+            var control = Controls.AsEnumerable().FirstOrDefault(x => x.Name == e.ControlName);
 
-        public virtual void OnClosed()
+            if (control == null)
+                throw new MvfException($"Could not bind {e.Property.Name} property because related control is not found");
+
+            BindingDispatcher.Bind(control, e.Property, e.Type);
+        }
+        
+        protected virtual void RaiseViewModelSet(TViewModel e)
         {
-            MvfLocator<TViewModel, IMvfForm>.RemoveViewModel(this);
+            ViewModelSet?.Invoke(this, e);
         }
-
-        public virtual void OnViewModelSet()
-        {
-
-        }
-
-        private bool CanBind(BindingType type, string viewModelPropertyName)
-        {
-            switch (type)
-            {
-                case BindingType.Once when _bindingHistory.Contains(viewModelPropertyName):
-                    return false;
-                default:
-                    return true;
-            }
-        }
-
-        private void OnBind(BindingEventArgs e)
-        {
-            if (!CanBind(e.BindingAttribute, e.ViewModelPropertyName)) return;
-
-            var control = Controls.AsEnumerable().First(x => x.Name == e.ControlName);
-
-            control.Invoke(new Action(() =>
-            {
-                var controlProprty = control.GetProperty(e.ViewModelPropertyName);
-
-                if (controlProprty == null) throw new MvfException($"{e.ViewModelPropertyName} is not know value of {control}");
-
-                try
-                {
-                    var value = MvfValueConverter.GetConvertedValue(e.Converter, e.Value);
-                    controlProprty.SetValue(control, value, null);
-                    _bindingHistory.Add(e.ViewModelPropertyName);
-                }
-                catch (Exception ex)
-                {
-                    throw new MvfException(ex.Message);
-                }
-            }));
-        }
-
-        #region - Initialize -
 
         private void InitializeViewModel()
         {
             var attribute = this.GetType().GetCustomAttribute<MvfBindableForm>();
 
             if (attribute == null)
-            {
-                //TODO: Logger
-                return;
-            }
+                throw new CustomAttributeFormatException($"Could not find {nameof(MvfBindableForm)} attribute over the {this.GetType().Name} form");
 
-            ViewModel = MvfLocator<TViewModel, IMvfForm>.CreateViewModel(this);
-            OnViewModelSet();
+            this.ViewModel = MvfLocator<TViewModel, IMvfForm>.CreateViewModel(this);
+            this.ViewModel.PropertyChanged += OnViewModelPropertyChanged;
+            this.BindingDispatcher = new MvfBindingDispatcher<TViewModel>(ViewModel);
+
+            RaiseViewModelSet(ViewModel);
         }
 
-        private void InitializeBindings()
+        private void InitializeControls()
         {
-            var viewModelProperties = ViewModel.GetType()
-                .GetProperties()
-                .HavingBindableAttribute()
-                .HavingValues(ViewModel)
-                .ToList();
+            this.BindableProperties = ViewModel.GetType().GetProperties().HavingBindableAttribute().HavingValues(ViewModel).ToList().AsReadOnly();
+        }
 
-            foreach (Control control in Controls)
+        private void InitializeStartupBindings()
+        {
+            foreach (Control control in this.Controls)
             {
-                var bindedControls = viewModelProperties.Where(x => x.ControlName() == control.Name).ToList();
+                var controlBindingProperties = this.BindableProperties.Where(x => x.GetControlName() == control.Name).ToList();
 
-                if (!bindedControls.Any()) continue;
+                if (!controlBindingProperties.Any()) continue;
 
-                foreach (var binding in bindedControls)
-                {
-                    control.Invoke(new Action(() =>
-                    {
-                        var controlProprty = control.GetProperty(binding.ProprtyName());
-                        controlProprty.SetValue(control, MvfValueConverter.GetConvertedValue(binding.Converter(), binding.Value(ViewModel), true), null);
-                    }));
-                }
+                foreach (var bindingProperty in controlBindingProperties)
+                    BindingDispatcher.Bind(control, bindingProperty);
             }
         }
-
-        private void InitializeEvents()
-        {
-            this.ViewModel.PropertyChanged += (s, a) => OnBind(a);
-            this.Load += (s, a) => OnLoad();
-            this.Closed += (s, a) => OnClosed();
-        }
-        #endregion
     }
 }

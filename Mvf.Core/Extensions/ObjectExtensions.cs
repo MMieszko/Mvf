@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Mvf.Core.Common
+namespace Mvf.Core.Extensions
 {
     public static class ObjectExtensions
     {
-        public static bool IsNullOrDefault<T>(T argument)
+        public static bool IsNullOrDefault<T>(this T argument)
         {
             // deal with normal scenarios
             if (argument == null) return true;

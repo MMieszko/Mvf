@@ -8,5 +8,10 @@ namespace Client
         {
             return $"{value} - EDITED!";
         }
+
+        public override object ConvertBack(object value)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

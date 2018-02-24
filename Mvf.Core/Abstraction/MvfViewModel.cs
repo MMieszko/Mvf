@@ -1,34 +1,42 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using Mvf.Core.Attributes;
 using Mvf.Core.Common;
+using Mvf.Core.Extensions;
 
 namespace Mvf.Core.Abstraction
 {
     public abstract class MvfViewModel : IMvfViewModel
     {
         public event EventHandler<BindingEventArgs> PropertyChanged;
-        
+
         protected void RaisePropertyChanged([CallerMemberName] string callerName = "")
         {
-            BindingEventArgs bindingEventArgs = null;
+            var bindingsArgs = GetBindingEventArgs(new StackTrace().GetFrame(1).GetMethod());
 
-            var method = new StackTrace().GetFrame(1).GetMethod();
-            var propName = method.Name.Remove(0, 4);
-            var property = method.DeclaringType?.GetProperty(propName);
+            PropertyChanged?.Invoke(this, bindingsArgs);
+        }
 
-            if (property == null) return;
+        public BindingEventArgs GetBindingEventArgs(MethodBase methodBase)
+        {
+            var property = methodBase.DeclaringType?.GetProperty(methodBase.Name.Remove(0, 4));
 
-            var value = property.GetValue(this, null);
+            if (property == null)
+                throw new MvfException($"Could not bind {methodBase.Name}. {nameof(RaisePropertyChanged)} must be called from property.");
 
-            var bindingConverterPair = property.GetBindingAttributes();
+            var bindingAttribute = property.GetAttributeOrDefault<MvfBindable>();
+            
+            if (bindingAttribute == null)
+                throw new MvfException($"Could not bind {methodBase.Name}. The property does not have {nameof(MvfBindable)} attribute");
 
-            if (bindingConverterPair.Bindable != null)
-            {
-                bindingEventArgs = new BindingEventArgs(callerName, bindingConverterPair.Bindable.ControlName,
-                    value, bindingConverterPair.Bindable.PropertyName, bindingConverterPair.Bindable.Type, bindingConverterPair.Convert?.ConverterType);
-            }
-            PropertyChanged?.Invoke(this, bindingEventArgs);
+            var bindingConverter = property.GetAttributeOrDefault<MvfConvert>();
+
+            var bindingEventArgs = new BindingEventArgs(bindingAttribute.ControlName,
+                property.GetValue(this, null), property, bindingAttribute.Type, bindingConverter?.ConverterType);
+
+            return bindingEventArgs;
         }
     }
 }

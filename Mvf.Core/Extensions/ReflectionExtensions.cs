@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Mvf.Core.Attributes;
 
-namespace Mvf.Core.Common
+namespace Mvf.Core.Extensions
 {
     public static class ReflectionExtensions
     {
@@ -27,25 +27,25 @@ namespace Mvf.Core.Common
             return result;
         }
 
-        public static object Value(this PropertyInfo property, object sourceObject)
+        public static object GetValue(this PropertyInfo property, object sourceObject)
         {
             var value = property.GetValue(sourceObject, null);
             return value;
         }
 
-        public static string ControlName(this PropertyInfo property)
+        public static string GetControlName(this PropertyInfo property)
         {
             var bindingAttribute = property.GetAttributeOrDefault<MvfBindable>();
             return bindingAttribute?.ControlName;
         }
 
-        public static string ProprtyName(this PropertyInfo property)
+        public static string GetProprtyName(this PropertyInfo property)
         {
             var bindingAttribute = property.GetAttributeOrDefault<MvfBindable>();
             return bindingAttribute?.PropertyName;
         }
 
-        public static Type Converter(this PropertyInfo property)
+        public static Type GetMfvConverter(this PropertyInfo property)
         {
             var bindingAttribute = property.GetAttributeOrDefault<MvfConvert>();
             return bindingAttribute?.ConverterType;
@@ -62,25 +62,6 @@ namespace Mvf.Core.Common
             var attriute = property.GetCustomAttributes(typeof(T), false).FirstOrDefault(x => x is T) as T;
             return attriute;
         }
-
-        public static MvfBindingDetails GetBindingAttributes(this PropertyInfo property)
-        {
-            return new MvfBindingDetails
-            {
-                Bindable = property.GetAttributeOrDefault<MvfBindable>(),
-                Convert = property.GetAttributeOrDefault<MvfConvert>()
-            };
-        }
-
-        public static MvfBindingDetails GetBindingDetails(this PropertyInfo property, object propertyOwner)
-        {
-            return new MvfBindingDetails
-            {
-                Bindable = property.GetAttributeOrDefault<MvfBindable>(),
-                Convert = property.GetAttributeOrDefault<MvfConvert>(),
-                Value = property.GetValue(propertyOwner)
-            };
-        }
-
+        
     }
 }

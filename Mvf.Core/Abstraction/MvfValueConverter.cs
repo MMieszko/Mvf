@@ -6,11 +6,12 @@ namespace Mvf.Core.Abstraction
     {
         public abstract object Convert(object value);
 
-        public virtual object ConvertBack(object value) => value;
+        public abstract object ConvertBack(object value);
 
         public static object GetConvertedValue(Type converter, object value, bool convertBack = false)
         {
             if (converter == null) return value;
+
             try
             {
                 if (!(Activator.CreateInstance(converter) is MvfValueConverter conv)) return value;

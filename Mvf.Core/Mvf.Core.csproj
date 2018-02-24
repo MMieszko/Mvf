@@ -51,15 +51,15 @@
     <Compile Include="Attributes\MvfBindable.cs" />
     <Compile Include="Attributes\MvfBindableForm.cs" />
     <Compile Include="Attributes\MvfConvert.cs" />
-    <Compile Include="Common\BindingEventArgs.cs" />
     <Compile Include="Common\BindingType.cs" />
+    <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\MvfException.cs" />
-    <Compile Include="Common\ObjectExtensions.cs" />
-    <Compile Include="Common\ReflectionExtensions.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="Abstraction\MvfValueConverter.cs" />
     <Compile Include="Extensions\ControlsExtensions.cs" />
     <Compile Include="Locator\MvfLocator.cs" />
-    <Compile Include="Common\MvfBindingDetails.cs" />
+    <Compile Include="MvfBindingDispatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
