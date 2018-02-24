@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
+
 using Mvf.Core.Abstraction;
-using Mvf.Core.Common;
 using Mvf.Core.Extensions;
+using Mvf.Core.Common;
 
 namespace Mvf.Core
 {
@@ -31,12 +32,11 @@ namespace Mvf.Core
             }
         }
 
-        public void Bind(Control control, PropertyInfo bindingProperty, BindingType? type = null)
+        public void Bind(Control control, PropertyInfo bindingProperty, Type converter = null, BindingType? type = null)
         {
             if (type != null && !CanBind(type.Value, bindingProperty)) return;
 
             var controlProprty = control.GetProperty(bindingProperty.GetProprtyName());
-            var converter = bindingProperty.GetMfvConverter();
 
             if (controlProprty == null) throw new MvfException($"{bindingProperty.Name} is not known value of {control}");
 

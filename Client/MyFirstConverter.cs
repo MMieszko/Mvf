@@ -6,7 +6,7 @@ namespace Client
     {
         public override object Convert(object value)
         {
-            return $"{value} - EDITED!";
+            return $"{value} - CONVERTED!";
         }
 
         public override object ConvertBack(object value)

@@ -6,5 +6,7 @@ namespace Mvf.Core.Abstraction
     public interface IMvfViewModel
     {
         event EventHandler<BindingEventArgs> PropertyChanged;
+
+        void OnViewInitialized();
     }
 }

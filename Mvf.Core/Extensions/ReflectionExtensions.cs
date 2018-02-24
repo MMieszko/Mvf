@@ -22,8 +22,7 @@ namespace Mvf.Core.Extensions
 
         public static IEnumerable<PropertyInfo> HavingBindableAttribute(this IEnumerable<PropertyInfo> collection)
         {
-            var result = collection.Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(MvfBindable) ||
-                                                                           a.AttributeType == typeof(MvfConvert)));
+            var result = collection.Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(MvfBindable)));
             return result;
         }
 
@@ -45,12 +44,6 @@ namespace Mvf.Core.Extensions
             return bindingAttribute?.PropertyName;
         }
 
-        public static Type GetMfvConverter(this PropertyInfo property)
-        {
-            var bindingAttribute = property.GetAttributeOrDefault<MvfConvert>();
-            return bindingAttribute?.ConverterType;
-        }
-        
         public static PropertyInfo GetProperty(this Control control, string propertyName)
         {
             var controlProprty = control.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
@@ -62,6 +55,5 @@ namespace Mvf.Core.Extensions
             var attriute = property.GetCustomAttributes(typeof(T), false).FirstOrDefault(x => x is T) as T;
             return attriute;
         }
-        
     }
 }

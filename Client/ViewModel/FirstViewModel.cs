@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Mvf.Core.Abstraction;
 using Mvf.Core.Attributes;
+using Mvf.Core.Common;
 
 namespace Client.ViewModel
 {
@@ -11,7 +12,7 @@ namespace Client.ViewModel
         private string _surname;
         private int _wiek;
 
-        [MvfBindable("ImieTesxtBox", "Text")]
+        [MvfBindable("ImieTesxtBox", "Text", typeof(MyFirstConverter))]
         public string Name
         {
             get => _name;

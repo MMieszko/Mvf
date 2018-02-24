@@ -50,7 +50,6 @@
     <Compile Include="Abstraction\MvfViewModel.cs" />
     <Compile Include="Attributes\MvfBindable.cs" />
     <Compile Include="Attributes\MvfBindableForm.cs" />
-    <Compile Include="Attributes\MvfConvert.cs" />
     <Compile Include="Common\BindingType.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\MvfException.cs" />

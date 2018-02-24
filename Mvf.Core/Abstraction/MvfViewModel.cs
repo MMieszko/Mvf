@@ -12,6 +12,11 @@ namespace Mvf.Core.Abstraction
     {
         public event EventHandler<BindingEventArgs> PropertyChanged;
 
+        public virtual void OnViewInitialized()
+        {
+            
+        }
+
         protected void RaisePropertyChanged([CallerMemberName] string callerName = "")
         {
             var bindingsArgs = GetBindingEventArgs(new StackTrace().GetFrame(1).GetMethod());
@@ -27,14 +32,12 @@ namespace Mvf.Core.Abstraction
                 throw new MvfException($"Could not bind {methodBase.Name}. {nameof(RaisePropertyChanged)} must be called from property.");
 
             var bindingAttribute = property.GetAttributeOrDefault<MvfBindable>();
-            
+
             if (bindingAttribute == null)
                 throw new MvfException($"Could not bind {methodBase.Name}. The property does not have {nameof(MvfBindable)} attribute");
 
-            var bindingConverter = property.GetAttributeOrDefault<MvfConvert>();
-
             var bindingEventArgs = new BindingEventArgs(bindingAttribute.ControlName,
-                property.GetValue(this, null), property, bindingAttribute.Type, bindingConverter?.ConverterType);
+                property.GetValue(this, null), property, bindingAttribute.Type, bindingAttribute.ConverterType);
 
             return bindingEventArgs;
         }

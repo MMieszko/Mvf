@@ -29,6 +29,7 @@ namespace Mvf.Core.Abstraction
             InitializeViewModel();
             InitializeControls();
             InitializeStartupBindings();
+            ViewModel.OnViewInitialized();
         }
         
         protected virtual void OnViewModelPropertyChanged(object sender, BindingEventArgs e)
@@ -38,7 +39,7 @@ namespace Mvf.Core.Abstraction
             if (control == null)
                 throw new MvfException($"Could not bind {e.Property.Name} property because related control is not found");
 
-            BindingDispatcher.Bind(control, e.Property, e.Type);
+            BindingDispatcher.Bind(control, e.Property, e.Converter, e.Type);
         }
         
         protected virtual void RaiseViewModelSet(TViewModel e)
