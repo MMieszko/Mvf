@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Mvf.Core;
 using Mvf.Core.Abstraction;
 using Mvf.Core.Attributes;
 using Mvf.Core.Common;
@@ -11,8 +14,9 @@ namespace Client.ViewModel
         private string _name = "Rysiek";
         private string _surname;
         private int _wiek;
-
-        [MvfBindable("ImieTesxtBox", "Text", typeof(MyFirstConverter))]
+        private MvfObserfableCollection<string> _names;
+        /*
+        [MvfBindable("ImieTesxtBox", nameof(TextBox.Text), typeof(MyFirstConverter))]
         public string Name
         {
             get => _name;
@@ -22,7 +26,7 @@ namespace Client.ViewModel
                 RaisePropertyChanged();
             }
         }
-        [MvfBindable("NazwiskoTextBox", "Text")]
+        [MvfBindable("NazwiskoTextBox", nameof(TextBox.Text))]
         public string Surname
         {
             get => _surname;
@@ -32,7 +36,7 @@ namespace Client.ViewModel
                 RaisePropertyChanged();
             }
         }
-        [MvfBindable("WiekTextbox", "Text")]
+        [MvfBindable("WiekTextbox", nameof(TextBox.Text))]
         public int Wiek
         {
             get => _wiek;
@@ -41,8 +45,23 @@ namespace Client.ViewModel
                 _wiek = value;
                 RaisePropertyChanged();
             }
+        }*/
+        [MvfBindable("FirstListView", nameof(ListView.Items))]
+        public MvfObserfableCollection<string> Names
+        {
+            get => _names;
+            set
+            {
+                _names = value;
+                RaisePropertyChanged();
+            }
         }
-         
+
+        public override void OnViewInitialized()
+        {
+            base.OnViewInitialized();
+            this.Names = new MvfObserfableCollection<string> { "T", "E", "S", "T" };
+        }
 
         public FirstViewModel()
         {
@@ -51,19 +70,19 @@ namespace Client.ViewModel
 
         private async void DoitAsync()
         {
-            await Task.Delay(TimeSpan.FromSeconds(1));
+             /*await Task.Delay(TimeSpan.FromSeconds(1));
 
-            //Wiek = 150;
+             //Wiek = 150;
 
-            await Task.Delay(TimeSpan.FromSeconds(1));
+             await Task.Delay(TimeSpan.FromSeconds(1));
 
-            Name = "Elo";
+             Name = "Elo";
 
-            await Task.Delay(TimeSpan.FromSeconds(3));
+             await Task.Delay(TimeSpan.FromSeconds(3));
+             
+             Surname = "Elo2";*/
 
-            Surname = "Elo2";
-
-
+     
         }
     }
 }

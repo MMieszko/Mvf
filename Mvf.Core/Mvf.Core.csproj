@@ -59,7 +59,10 @@
     <Compile Include="Extensions\ControlsExtensions.cs" />
     <Compile Include="Locator\MvfLocator.cs" />
     <Compile Include="MvfBindingDispatcher.cs" />
+    <Compile Include="MvfCustomPropertyBindingFactory.cs" />
+    <Compile Include="MvfObserfableCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeDictionary.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

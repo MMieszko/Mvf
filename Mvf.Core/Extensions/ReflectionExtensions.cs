@@ -55,5 +55,38 @@ namespace Mvf.Core.Extensions
             var attriute = property.GetCustomAttributes(typeof(T), false).FirstOrDefault(x => x is T) as T;
             return attriute;
         }
+
+        public static T CopyPropertyValues<T>(this T @this, T otherObject)
+            where T : class
+        {
+           var oType = @this.GetType();
+
+            foreach (var oProperty in oType.GetProperties())
+            {
+                try
+                {
+                    var oOldValue = oProperty.GetValue(@this, null);
+                    var oNewValue = oProperty.GetValue(otherObject, null);
+
+
+                    // this will handle the scenario where either value is null
+                    if (Equals(oOldValue, oNewValue)) continue;
+
+                    // Handle the display values when the underlying value is null
+                    var sOldValue = oOldValue?.ToString() ?? "null";
+                    var sNewValue = oNewValue?.ToString() ?? "null";
+
+                    System.Diagnostics.Debug.WriteLine("Property " + oProperty.Name + " was: " + sOldValue + "; is: " + sNewValue);
+                }
+                catch
+                {
+                    continue;
+                }
+                
+
+            }
+
+            return @this;
+        }
     }
 }

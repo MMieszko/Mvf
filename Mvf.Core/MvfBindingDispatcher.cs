@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -40,12 +41,25 @@ namespace Mvf.Core
 
             if (controlProprty == null) throw new MvfException($"{bindingProperty.Name} is not known value of {control}");
 
+            var customPropertyBinding = MvfCustomPropertyBindingFactory.Get(bindingProperty.PropertyType);
+
             control.BeginInvoke(new Action(() =>
             {
-                if (converter == null)
-                    controlProprty.SetValue(control, bindingProperty.GetValue(ViewModel));
+                var givenValue = bindingProperty.GetValue(ViewModel);
+                var value = customPropertyBinding != null ? customPropertyBinding.Func.Invoke(givenValue, control) : bindingProperty.GetValue(ViewModel);
+
+
+                if (value is Control c)
+                {
+                    control.CopyPropertyValues(c);
+                }
                 else
-                    controlProprty.SetValue(control, MvfValueConverter.GetConvertedValue(converter, bindingProperty.GetValue(ViewModel)), null);
+                {
+                    if (converter == null)
+                        controlProprty.SetValue(control, value);
+                    else
+                        controlProprty.SetValue(control, MvfValueConverter.GetConvertedValue(converter, value), null);
+                }
             }));
         }
     }

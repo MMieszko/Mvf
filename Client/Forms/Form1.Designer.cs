@@ -35,6 +35,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.FirstListView = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // button1
@@ -52,6 +53,7 @@
             this.ImieTesxtBox.Name = "ImieTesxtBox";
             this.ImieTesxtBox.Size = new System.Drawing.Size(149, 20);
             this.ImieTesxtBox.TabIndex = 1;
+            this.ImieTesxtBox.Text = "Elo - CONVERTED!";
             // 
             // NazwiskoTextBox
             // 
@@ -59,6 +61,7 @@
             this.NazwiskoTextBox.Name = "NazwiskoTextBox";
             this.NazwiskoTextBox.Size = new System.Drawing.Size(149, 20);
             this.NazwiskoTextBox.TabIndex = 2;
+            this.NazwiskoTextBox.Text = "Elo2";
             // 
             // WiekTextbox
             // 
@@ -94,11 +97,20 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "Wiek";
             // 
+            // FirstListView
+            // 
+            this.FirstListView.Location = new System.Drawing.Point(611, 58);
+            this.FirstListView.Name = "FirstListView";
+            this.FirstListView.Size = new System.Drawing.Size(186, 228);
+            this.FirstListView.TabIndex = 7;
+            this.FirstListView.UseCompatibleStateImageBehavior = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(844, 514);
+            this.Controls.Add(this.FirstListView);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -122,6 +134,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ListView FirstListView;
     }
 }
 
