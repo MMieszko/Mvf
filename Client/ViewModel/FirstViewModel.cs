@@ -15,8 +15,8 @@ namespace Client.ViewModel
         private string _surname;
         private int _wiek;
         private MvfObserfableCollection<string> _names;
-        /*
-        [MvfBindable("ImieTesxtBox", nameof(TextBox.Text), typeof(MyFirstConverter))]
+       
+        [MvfBindable(nameof(TextBox.Text), "ImieTesxtBox", typeof(MyFirstConverter))]
         public string Name
         {
             get => _name;
@@ -26,7 +26,7 @@ namespace Client.ViewModel
                 RaisePropertyChanged();
             }
         }
-        [MvfBindable("NazwiskoTextBox", nameof(TextBox.Text))]
+        [MvfBindable(nameof(TextBox.Text), "NazwiskoTextBox")]
         public string Surname
         {
             get => _surname;
@@ -36,7 +36,7 @@ namespace Client.ViewModel
                 RaisePropertyChanged();
             }
         }
-        [MvfBindable("WiekTextbox", nameof(TextBox.Text))]
+        [MvfBindable(nameof(TextBox.Text), "WiekTextbox")]
         public int Wiek
         {
             get => _wiek;
@@ -45,7 +45,7 @@ namespace Client.ViewModel
                 _wiek = value;
                 RaisePropertyChanged();
             }
-        }*/
+        }
         [MvfBindable(nameof(ListView.Items), "FirstListView")]
         public MvfObserfableCollection<string> Names
         {
@@ -70,17 +70,17 @@ namespace Client.ViewModel
 
         private async void DoitAsync()
         {
-            /*await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromSeconds(1));
 
             //Wiek = 150;
 
-            await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromSeconds(5));
 
-            Name = "Elo";
+            Name = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
             await Task.Delay(TimeSpan.FromSeconds(3));
 
-            Surname = "Elo2";*/
+            Surname = "BBBBBBBBBBBBBBB";
 
 
         }
