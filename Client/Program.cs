@@ -19,22 +19,7 @@ namespace Client
         private static void Main()
         {
 
-            MvfCustomPropertyBindingFactory.Register<IMvfObservableCollection>(new MvfCustomPropertyBinding(
-                (values, view) =>
-                {
-                    var listView = view as ListView;
-                    listView.Items.Clear();
-
-                    var givenValue = ((IEnumerable)values).GetEnumerator();
-
-                    while (givenValue.MoveNext())
-                    {
-                        listView.Items.Add(givenValue.Current?.ToString());
-                    }
-
-                    return view;
-                }));
-
+            //MvfCustomPropertyBindingFactory.Register(new MvfObservableCollectionBinding(nameof(ListView.Items), typeof(ListView)));
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

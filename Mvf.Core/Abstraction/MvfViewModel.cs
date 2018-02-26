@@ -14,7 +14,7 @@ namespace Mvf.Core.Abstraction
 
         public virtual void OnViewInitialized()
         {
-            
+
         }
 
         protected void RaisePropertyChanged([CallerMemberName] string callerName = "")
@@ -36,7 +36,7 @@ namespace Mvf.Core.Abstraction
             if (bindingAttribute == null)
                 throw new MvfException($"Could not bind {methodBase.Name}. The property does not have {nameof(MvfBindable)} attribute");
 
-            var bindingEventArgs = new BindingEventArgs(bindingAttribute.ControlName,
+            var bindingEventArgs = new BindingEventArgs(bindingAttribute.ControlPropertyName, bindingAttribute.ControlName,
                 property.GetValue(this, null), property, bindingAttribute.Type, bindingAttribute.ConverterType);
 
             return bindingEventArgs;

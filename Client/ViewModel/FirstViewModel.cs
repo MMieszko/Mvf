@@ -46,7 +46,7 @@ namespace Client.ViewModel
                 RaisePropertyChanged();
             }
         }*/
-        [MvfBindable("FirstListView", nameof(ListView.Items))]
+        [MvfBindable(nameof(ListView.Items), "FirstListView")]
         public MvfObserfableCollection<string> Names
         {
             get => _names;
@@ -70,19 +70,19 @@ namespace Client.ViewModel
 
         private async void DoitAsync()
         {
-             /*await Task.Delay(TimeSpan.FromSeconds(1));
+            /*await Task.Delay(TimeSpan.FromSeconds(1));
 
-             //Wiek = 150;
+            //Wiek = 150;
 
-             await Task.Delay(TimeSpan.FromSeconds(1));
+            await Task.Delay(TimeSpan.FromSeconds(1));
 
-             Name = "Elo";
+            Name = "Elo";
 
-             await Task.Delay(TimeSpan.FromSeconds(3));
-             
-             Surname = "Elo2";*/
+            await Task.Delay(TimeSpan.FromSeconds(3));
 
-     
+            Surname = "Elo2";*/
+
+
         }
     }
 }

@@ -9,8 +9,12 @@ using Mvf.Core.Attributes;
 
 namespace Client.Forms
 {
-    [MvfBindableForm(typeof(FirstViewModel), typeof(FirstViewModelForm))]
+    [MvfForm(typeof(FirstViewModel), typeof(FirstViewModelForm))]
     public class FirstViewModelForm : MvfForm<FirstViewModel>
     {
+        public FirstViewModelForm()
+        {
+            
+        }
     }
 }

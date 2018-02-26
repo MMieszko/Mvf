@@ -32,16 +32,16 @@ namespace Mvf.Core.Extensions
             return value;
         }
 
-        public static string GetControlName(this PropertyInfo property)
+        public static string GetControlPropertyName(this PropertyInfo property)
         {
             var bindingAttribute = property.GetAttributeOrDefault<MvfBindable>();
-            return bindingAttribute?.ControlName;
+            return bindingAttribute?.ControlPropertyName;
         }
 
         public static string GetProprtyName(this PropertyInfo property)
         {
             var bindingAttribute = property.GetAttributeOrDefault<MvfBindable>();
-            return bindingAttribute?.PropertyName;
+            return bindingAttribute?.ControlPropertyName;
         }
 
         public static PropertyInfo GetProperty(this Control control, string propertyName)
@@ -59,7 +59,7 @@ namespace Mvf.Core.Extensions
         public static T CopyPropertyValues<T>(this T @this, T otherObject)
             where T : class
         {
-           var oType = @this.GetType();
+            var oType = @this.GetType();
 
             foreach (var oProperty in oType.GetProperties())
             {
@@ -82,10 +82,7 @@ namespace Mvf.Core.Extensions
                 {
                     continue;
                 }
-                
-
             }
-
             return @this;
         }
     }

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 
 using Mvf.Core.Attributes;
+using Mvf.Core.Bindings;
 using Mvf.Core.Common;
 using Mvf.Core.Extensions;
 using Mvf.Core.Locator;
@@ -49,10 +50,10 @@ namespace Mvf.Core.Abstraction
 
         private void InitializeViewModel()
         {
-            var attribute = this.GetType().GetCustomAttribute<MvfBindableForm>();
+            var attribute = this.GetType().GetCustomAttribute<MvfForm>();
 
             if (attribute == null)
-                throw new CustomAttributeFormatException($"Could not find {nameof(MvfBindableForm)} attribute over the {this.GetType().Name} form");
+                throw new CustomAttributeFormatException($"Could not find {nameof(MvfForm)} attribute over the {this.GetType().Name} form");
 
             this.ViewModel = MvfLocator<TViewModel, IMvfForm>.CreateViewModel(this);
             this.ViewModel.PropertyChanged += OnViewModelPropertyChanged;
@@ -70,7 +71,7 @@ namespace Mvf.Core.Abstraction
         {
             foreach (Control control in this.Controls)
             {
-                var controlBindingProperties = this.BindableProperties.Where(x => x.GetControlName() == control.Name).ToList();
+                var controlBindingProperties = this.BindableProperties.Where(x => x.GetControlPropertyName() == control.Name).ToList();
 
                 if (!controlBindingProperties.Any()) continue;
 

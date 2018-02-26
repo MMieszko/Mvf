@@ -2,12 +2,12 @@
 
 namespace Mvf.Core.Attributes
 {
-    public class MvfBindableForm : Attribute
+    public class MvfForm : Attribute
     {
         public Type ViewModelType { get; }
         public Type FormType { get; }
         
-        public MvfBindableForm(Type viewModel, Type form)
+        public MvfForm(Type viewModel, Type form)
         {
             this.ViewModelType = viewModel;
             this.FormType = form;
