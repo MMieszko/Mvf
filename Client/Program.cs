@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Client.Forms;
 using Mvf.Core;
+using Mvf.Core.Bindings;
 
 namespace Client
 {
@@ -18,13 +19,15 @@ namespace Client
         [STAThread]
         private static void Main()
         {
-
-            //MvfCustomPropertyBindingFactory.Register(new MvfObservableCollectionBinding(nameof(ListView.Items), typeof(ListView)));
+            InitializeMvf();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
+        }
 
-
+        public static void InitializeMvf()
+        {
+            MvfAppStart.RegiesterBindingUpdater();
         }
     }
 }

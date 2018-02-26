@@ -43,20 +43,35 @@ namespace Mvf.Core.Bindings
 
             control.BeginInvoke(new Action(() =>
             {
+
+                var updated = UpdateWithCustomUpdater(control, bindingProperty, converter);
+
+                if (updated) return;
+
                 var value = GetCustomBindingValue(control, bindingProperty, converter);
                 controlProprty.SetValue(control, value);
             }));
         }
+        
+        public bool UpdateWithCustomUpdater(Control control, PropertyInfo bindingProperty, Type converter = null)
+        {
+            var givenValue = bindingProperty.GetValue(ViewModel);
+            var customPropertyUpdater = MvfCustomPropertyUpdaterFactory.Find(bindingProperty.GetControlPropertyName(), control);
+
+            if (customPropertyUpdater == null) return false;
+
+            customPropertyUpdater.UpdatedControlImplementation(givenValue, control);
+
+            return true;
+        }
 
         public object GetCustomBindingValue(Control control, PropertyInfo bindingProperty, Type converter = null)
         {
-            var customPropertyBinding = MvfCustomPropertyBindingFactory.Find(bindingProperty.GetControlPropertyName(), control);
             var givenValue = bindingProperty.GetValue(ViewModel);
+            var customPropertyBinding = MvfCustomPropertyBindingFactory.Find(bindingProperty.GetControlPropertyName(), control);
 
-            var value = customPropertyBinding == null
-                ? bindingProperty.GetValue(ViewModel)
-                : customPropertyBinding.ReturnValueImplementation(givenValue, control);
-
+            var value = customPropertyBinding != null ? customPropertyBinding.ReturnValueImplementation(givenValue, control) : givenValue;
+            
             return converter == null
                 ? value
                 : MvfValueConverter.GetConvertedValue(converter, value);

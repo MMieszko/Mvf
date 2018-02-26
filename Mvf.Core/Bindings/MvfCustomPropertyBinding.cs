@@ -2,17 +2,13 @@
 
 namespace Mvf.Core.Bindings
 {
-    public abstract class MvfCustomPropertyBinding
+    public abstract class MvfCustomPropertyBinding : MvfCustomBinding
     {
-        public string ControlPropertyName { get; }
-        public Type ControlType { get; }
+        protected MvfCustomPropertyBinding(string controlPropertyName, Type controlType)
+            : base(controlPropertyName, controlType)
+        {
+        }
 
         public abstract object ReturnValueImplementation(object value, object control);
-
-        protected MvfCustomPropertyBinding(string controlPropertyName, Type controlType)
-        {
-            ControlPropertyName = controlPropertyName;
-            ControlType = controlType;
-        }
     }
 }
