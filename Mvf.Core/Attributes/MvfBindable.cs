@@ -14,8 +14,7 @@ namespace Mvf.Core.Attributes
         {
 
         }
-
-
+        
         public MvfBindable(string controlPropertyName, string controlName, BindingType type, Type converter)
             : this()
         {

@@ -51,9 +51,11 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Abstraction\MvfViewModel.cs" />
+    <Compile Include="Attributes\MvfCommandable.cs" />
     <Compile Include="Bindings\MvfCustomPropertyUpdater.cs" />
     <Compile Include="Bindings\MvfCustomPropertyUpdaterFactory.cs" />
     <Compile Include="Bindings\MvfCustomBinding.cs" />
+    <Compile Include="MvfCommand.cs" />
     <Compile Include="MvfAppStart.cs" />
     <Compile Include="Attributes\MvfBindable.cs" />
     <Compile Include="Attributes\MvfForm.cs" />

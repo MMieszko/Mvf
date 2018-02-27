@@ -20,9 +20,10 @@ namespace Mvf.Core.Extensions
             return result;
         }
 
-        public static IEnumerable<PropertyInfo> HavingBindableAttribute(this IEnumerable<PropertyInfo> collection)
+        public static bool HasAttribute<TAttribute>(this PropertyInfo @this)
         {
-            var result = collection.Where(x => x.CustomAttributes.Any(a => a.AttributeType == typeof(MvfBindable)));
+            var result = @this.CustomAttributes.Any(x => x.AttributeType == typeof(TAttribute));
+
             return result;
         }
 
@@ -32,16 +33,17 @@ namespace Mvf.Core.Extensions
             return value;
         }
 
-        public static string GetControlPropertyName(this PropertyInfo property)
+        public static TResult GetPropertyFromAttribute<TAtribute, TResult>(this PropertyInfo property, Func<TAtribute, TResult> selector)
+              where TAtribute : Attribute
         {
-            var bindingAttribute = property.GetAttributeOrDefault<MvfBindable>();
-            return bindingAttribute?.ControlPropertyName;
-        }
+            var attribute = property.GetAttributeOrDefault<TAtribute>();
 
-        public static string GetProprtyName(this PropertyInfo property)
-        {
-            var bindingAttribute = property.GetAttributeOrDefault<MvfBindable>();
-            return bindingAttribute?.ControlPropertyName;
+            if (attribute == null) return default(TResult);
+
+            var result = selector(attribute);
+
+            return result;
+
         }
 
         public static PropertyInfo GetProperty(this Control control, string propertyName)

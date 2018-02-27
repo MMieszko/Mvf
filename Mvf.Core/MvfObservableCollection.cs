@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace Mvf.Core
 {
@@ -6,7 +8,7 @@ namespace Mvf.Core
     {
     }
 
-    public interface IMvfObservableCollection
+    public interface IMvfObservableCollection : INotifyCollectionChanged, IEnumerable
     {
         
     }

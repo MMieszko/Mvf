@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,12 +25,14 @@ namespace Mvf.Core
             : base(controlPropertyName, controlType)
         {
         }
-
-
+        
         public override object UpdatedControlImplementation(object value, object control)
         {
             var listView = control as ListView;
-            var values = value as IEnumerable;
+            var values = value as IMvfObservableCollection;
+
+
+            values.CollectionChanged += (s,a) =>  OnCollectionChanged(listView, s, a);
 
             foreach (var val in values)
             {
@@ -37,6 +40,15 @@ namespace Mvf.Core
             }
 
             return listView;
+        }
+
+        private void OnCollectionChanged(ListView listView, object sender, NotifyCollectionChangedEventArgs e)
+        {
+            foreach(var val in e.NewItems)
+            {
+                listView.Items.Add(val.ToString());
+            }
+
         }
     }
 }

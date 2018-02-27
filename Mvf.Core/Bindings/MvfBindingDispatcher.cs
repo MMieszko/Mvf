@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 using Mvf.Core.Abstraction;
+using Mvf.Core.Attributes;
 using Mvf.Core.Common;
 using Mvf.Core.Extensions;
 
@@ -35,12 +36,11 @@ namespace Mvf.Core.Bindings
         {
             if (type != null && !CanBind(type.Value, bindingProperty)) return;
 
-            var controlProprty = control.GetProperty(bindingProperty.GetProprtyName());
+            var controlProprty = control.GetProperty(bindingProperty.GetPropertyFromAttribute<MvfBindable, string>(x => x.ControlPropertyName));
 
             if (controlProprty == null)
                 throw new MvfException($"{bindingProperty.Name} is not known value of {control}");
-
-
+            
             control.BeginInvoke(new Action(() =>
             {
 
@@ -56,7 +56,7 @@ namespace Mvf.Core.Bindings
         public bool UpdateWithCustomUpdater(Control control, PropertyInfo bindingProperty, Type converter = null)
         {
             var givenValue = bindingProperty.GetValue(ViewModel);
-            var customPropertyUpdater = MvfCustomPropertyUpdaterFactory.Find(bindingProperty.GetControlPropertyName(), control);
+            var customPropertyUpdater = MvfCustomPropertyUpdaterFactory.Find(bindingProperty.GetPropertyFromAttribute<MvfBindable, string>(y => y.ControlPropertyName), control);
 
             if (customPropertyUpdater == null) return false;
 
@@ -68,7 +68,7 @@ namespace Mvf.Core.Bindings
         public object GetCustomBindingValue(Control control, PropertyInfo bindingProperty, Type converter = null)
         {
             var givenValue = bindingProperty.GetValue(ViewModel);
-            var customPropertyBinding = MvfCustomPropertyBindingFactory.Find(bindingProperty.GetControlPropertyName(), control);
+            var customPropertyBinding = MvfCustomPropertyBindingFactory.Find(bindingProperty.GetPropertyFromAttribute<MvfBindable, string>(y => y.ControlPropertyName), control);
 
             var value = customPropertyBinding != null ? customPropertyBinding.ReturnValueImplementation(givenValue, control) : givenValue;
             

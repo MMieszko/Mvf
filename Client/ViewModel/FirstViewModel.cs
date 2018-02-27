@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Input;
 using Mvf.Core;
 using Mvf.Core.Abstraction;
 using Mvf.Core.Attributes;
@@ -15,7 +16,11 @@ namespace Client.ViewModel
         private string _surname;
         private int _wiek;
         private MvfObserfableCollection<string> _names;
-       
+
+
+        [MvfCommandable(nameof(Button.Click), "button1")]
+        public ICommand FirstCommand { get; set; }
+        
         [MvfBindable(nameof(TextBox.Text), "ImieTesxtBox", typeof(MyFirstConverter))]
         public string Name
         {
@@ -66,6 +71,12 @@ namespace Client.ViewModel
         public FirstViewModel()
         {
             DoitAsync();
+            FirstCommand = new MvfCommand(FirstCommandImpl);
+        }
+
+        private void FirstCommandImpl(object o)
+        {
+            this.Names.Add("Nowy dodany kolega");
         }
 
         private async void DoitAsync()
