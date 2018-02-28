@@ -17,10 +17,8 @@ namespace Client.ViewModel
         private int _wiek;
         private MvfObserfableCollection<string> _names;
 
-
         [MvfCommandable(nameof(Button.Click), "button1")]
         public ICommand FirstCommand { get; set; }
-        
         [MvfBindable(nameof(TextBox.Text), "ImieTesxtBox", typeof(MyFirstConverter))]
         public string Name
         {

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Mvf.Core.Attributes;
 using Mvf.Core.Bindings;
+using Mvf.Core.Commands;
 using Mvf.Core.Common;
 using Mvf.Core.Extensions;
 using Mvf.Core.Locator;
@@ -18,8 +19,8 @@ namespace Mvf.Core.Abstraction
     {
         protected TViewModel ViewModel;
         protected IReadOnlyCollection<PropertyInfo> BindableProperties { get; private set; }
-        //protected IReadOnlyCollection<PropertyInfo> CommandableProperties { get; private set; }
         protected MvfBindingDispatcher<TViewModel> BindingDispatcher { get; private set; }
+        protected MvfCommandDispatcher<TViewModel> CommandDispatcher { get; private set; }
         protected event EventHandler<TViewModel> ViewModelSet;
 
         protected MvfForm()
@@ -62,6 +63,7 @@ namespace Mvf.Core.Abstraction
             this.ViewModel = MvfLocator<TViewModel, IMvfForm>.CreateViewModel(this);
             this.ViewModel.PropertyChanged += OnViewModelPropertyChanged;
             this.BindingDispatcher = new MvfBindingDispatcher<TViewModel>(ViewModel);
+            this.CommandDispatcher = new MvfCommandDispatcher<TViewModel>(ViewModel);
 
             RaiseViewModelSet(ViewModel);
         }
@@ -78,27 +80,7 @@ namespace Mvf.Core.Abstraction
 
         private void InitializeCommands()
         {
-            var properties = ViewModel.GetType()
-                                      .GetProperties()
-                                      .Where(x => x.HasAttribute<MvfCommandable>())
-                                      .ToList();
-
-            foreach (var commandProperty in properties)
-            {
-                var controlName = commandProperty.GetPropertyFromAttribute<MvfCommandable, string>(x => x.ControlName);
-                var eventName = commandProperty.GetPropertyFromAttribute<MvfCommandable, string>(x => x.EventName);
-                var mvfCommand = commandProperty.GetValue(ViewModel, null) as MvfCommand;
-
-                var control = this.Controls.AsEnumerable().FirstOrDefault(x => x.Name == controlName);
-
-                if (control == null || mvfCommand == null) continue;
-
-                var @event = control.GetType().GetEvent(eventName);
-
-                @event.AddEventHandler(control,
-                    Delegate.CreateDelegate(@event.EventHandlerType, mvfCommand, mvfCommand.GetType().GetMethod(nameof(MvfCommand.ExecuteImplementation))));
-
-            }
+            this.CommandDispatcher.Initialize(this.Controls.AsEnumerable());
         }
 
         private void InitializeStartupBindings()

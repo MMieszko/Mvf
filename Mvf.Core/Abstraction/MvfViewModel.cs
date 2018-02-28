@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 using Mvf.Core.Attributes;
 using Mvf.Core.Common;
 using Mvf.Core.Extensions;
@@ -11,7 +12,7 @@ namespace Mvf.Core.Abstraction
     public abstract class MvfViewModel : IMvfViewModel
     {
         public event EventHandler<BindingEventArgs> PropertyChanged;
-
+        
         public virtual void OnViewInitialized()
         {
 

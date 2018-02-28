@@ -55,7 +55,8 @@
     <Compile Include="Bindings\MvfCustomPropertyUpdater.cs" />
     <Compile Include="Bindings\MvfCustomPropertyUpdaterFactory.cs" />
     <Compile Include="Bindings\MvfCustomBinding.cs" />
-    <Compile Include="MvfCommand.cs" />
+    <Compile Include="Commands\MvfCommandDispatcher.cs" />
+    <Compile Include="Commands\MvfCommand.cs" />
     <Compile Include="MvfAppStart.cs" />
     <Compile Include="Attributes\MvfBindable.cs" />
     <Compile Include="Attributes\MvfForm.cs" />
