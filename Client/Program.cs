@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Client.Forms;
 using Mvf.Core;
-using Mvf.Core.Bindings;
 
 namespace Client
 {
@@ -19,15 +18,17 @@ namespace Client
         [STAThread]
         private static void Main()
         {
-            InitializeMvf();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
-        }
 
-        public static void InitializeMvf()
-        {
-            MvfAppStart.RegiesterBindingUpdater();
+            var myApp = new MyApp();
+
+            myApp.RunApplication(new Form1());
         }
+    }
+
+    public class MyApp : MvfAppStart
+    {
+
     }
 }

@@ -6,49 +6,43 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Mvf.Core.Abstraction;
 using Mvf.Core.Bindings;
+using Mvf.Core.PropertyUpdaters;
+using Ninject;
 
 namespace Mvf.Core
 {
-    public static class MvfAppStart
+    public class MvfAppStart
     {
-        public static void RegiesterBindingUpdater()
+        private readonly StandardKernel _kernel;
+
+        protected MvfAppStart()
+        {
+            this._kernel = new StandardKernel();
+        }
+
+        protected virtual void RegiesterCustomBindings() { }
+
+        protected virtual void RegiesterBindingUpdater()
         {
             MvfCustomPropertyUpdaterFactory.Register(new MvfObservableCollectionBindingUpdater(nameof(ListView.Items), typeof(ListView)));
         }
-    }
 
-
-    public class MvfObservableCollectionBindingUpdater : MvfCustomPropertyUpdater
-    {
-        public MvfObservableCollectionBindingUpdater(string controlPropertyName, Type controlType) 
-            : base(controlPropertyName, controlType)
+        public void RunApplication<TForm>(TForm startupForm)
+            where TForm : Form
         {
-        }
-        
-        public override object UpdatedControlImplementation(object value, object control)
-        {
-            var listView = control as ListView;
-            var values = value as IMvfObservableCollection;
-
-
-            values.CollectionChanged += (s,a) =>  OnCollectionChanged(listView, s, a);
-
-            foreach (var val in values)
-            {
-                listView.Items.Add(val.ToString());
-            }
-
-            return listView;
+            InitializeIoC(_kernel);
+            RegiesterBindingUpdater();
+            RegiesterCustomBindings();
+            Application.Run(startupForm);
         }
 
-        private void OnCollectionChanged(ListView listView, object sender, NotifyCollectionChangedEventArgs e)
+        protected virtual void InitializeIoC(StandardKernel kernel)
         {
-            foreach(var val in e.NewItems)
-            {
-                listView.Items.Add(val.ToString());
-            }
-
+            
         }
     }
 }
+
+
