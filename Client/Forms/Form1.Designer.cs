@@ -53,7 +53,6 @@
             this.ImieTesxtBox.Name = "ImieTesxtBox";
             this.ImieTesxtBox.Size = new System.Drawing.Size(149, 20);
             this.ImieTesxtBox.TabIndex = 1;
-            this.ImieTesxtBox.Text = "Elo - CONVERTED!";
             // 
             // NazwiskoTextBox
             // 
@@ -61,7 +60,6 @@
             this.NazwiskoTextBox.Name = "NazwiskoTextBox";
             this.NazwiskoTextBox.Size = new System.Drawing.Size(149, 20);
             this.NazwiskoTextBox.TabIndex = 2;
-            this.NazwiskoTextBox.Text = "Elo2";
             // 
             // WiekTextbox
             // 

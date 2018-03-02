@@ -13,7 +13,7 @@ namespace Client.ViewModel
     public class FirstViewModel : MvfViewModel
     {
         private string _name = "Rysiek";
-        private string _surname;
+        private string _surname = "A chuj cie to";
         private int _wiek;
         private MvfObserfableCollection<string> _names;
 
@@ -68,7 +68,7 @@ namespace Client.ViewModel
 
         public FirstViewModel()
         {
-            DoitAsync();
+            //DoitAsync();
             FirstCommand = new MvfCommand(FirstCommandImpl);
         }
 

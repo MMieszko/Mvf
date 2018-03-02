@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Client.Forms;
 using Mvf.Core;
+using Ninject.Infrastructure.Language;
 
 namespace Client
 {
@@ -24,6 +25,7 @@ namespace Client
             var myApp = new MyApp();
 
             myApp.RunApplication(new Form1());
+
         }
     }
 

@@ -18,7 +18,6 @@ namespace Mvf.Core.Abstraction
         where TViewModel : IMvfViewModel
     {
         protected TViewModel ViewModel;
-        protected IReadOnlyCollection<PropertyInfo> BindableProperties { get; private set; }
         protected MvfBindingDispatcher<TViewModel> BindingDispatcher { get; private set; }
         protected MvfCommandDispatcher<TViewModel> CommandDispatcher { get; private set; }
         protected event EventHandler<TViewModel> ViewModelSet;
@@ -31,9 +30,9 @@ namespace Mvf.Core.Abstraction
         protected virtual void OnViewInitialized(object sender, EventArgs eventArgs)
         {
             InitializeViewModel();
-            InitializeControls();
-            InitializeStartupBindings();
-            InitializeCommands();
+            this.BindingDispatcher = new MvfBindingDispatcher<TViewModel>(ViewModel, this);
+            this.CommandDispatcher = new MvfCommandDispatcher<TViewModel>(ViewModel);
+            this.CommandDispatcher.Initialize(this.Controls.AsEnumerable());
             ViewModel.OnViewInitialized();
         }
 
@@ -43,7 +42,7 @@ namespace Mvf.Core.Abstraction
 
             if (control == null)
                 return;
-            //throw new MvfException($"Could not bind {e.Property.Name} property because related control is not found");
+            //TODO: throw new MvfException($"Could not bind {e.Property.Name} property because related control is not found");
 
             BindingDispatcher.Bind(control, e.Property, e.Converter, e.Type);
         }
@@ -62,40 +61,8 @@ namespace Mvf.Core.Abstraction
 
             this.ViewModel = MvfLocator<TViewModel, IMvfForm>.CreateViewModel(this);
             this.ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-            this.BindingDispatcher = new MvfBindingDispatcher<TViewModel>(ViewModel);
-            this.CommandDispatcher = new MvfCommandDispatcher<TViewModel>(ViewModel);
-
+            
             RaiseViewModelSet(ViewModel);
-        }
-
-        private void InitializeControls()
-        {
-            this.BindableProperties = ViewModel.GetType()
-                                               .GetProperties()
-                                               .HavingValues(ViewModel)
-                                               .Where(x => x.HasAttribute<MvfBindable>())
-                                               .ToList()
-                                               .AsReadOnly();
-        }
-
-        private void InitializeCommands()
-        {
-            this.CommandDispatcher.Initialize(this.Controls.AsEnumerable());
-        }
-
-        private void InitializeStartupBindings()
-        {
-            foreach (Control control in this.Controls)
-            {
-                var controlBindingProperties = this.BindableProperties
-                                                   .Where(x => x.GetPropertyFromAttribute<MvfBindable, string>(y => y.ControlPropertyName) == control.Name)
-                                                   .ToList();
-
-                if (!controlBindingProperties.Any()) continue;
-
-                foreach (var bindingProperty in controlBindingProperties)
-                    BindingDispatcher.Bind(control, bindingProperty);
-            }
         }
     }
 }

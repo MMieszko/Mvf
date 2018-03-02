@@ -26,13 +26,7 @@ namespace Mvf.Core.Extensions
 
             return result;
         }
-
-        public static object GetValue(this PropertyInfo property, object sourceObject)
-        {
-            var value = property.GetValue(sourceObject, null);
-            return value;
-        }
-
+        
         public static TResult GetPropertyFromAttribute<TAtribute, TResult>(this PropertyInfo property, Func<TAtribute, TResult> selector)
               where TAtribute : Attribute
         {

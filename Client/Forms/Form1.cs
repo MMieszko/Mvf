@@ -1,6 +1,9 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Reflection;
+using System.Windows.Forms;
 using Client.ViewModel;
 using Mvf.Core.Attributes;
+using Mvf.Core.Extensions;
 
 namespace Client.Forms
 {
@@ -10,9 +13,8 @@ namespace Client.Forms
         public Form1()
         {
             InitializeComponent();
-
+            this.Name = " FORM 1 ";
             FirstListView.View = View.List;
-          
         }
     }
 }
