@@ -6,12 +6,13 @@ namespace Client
     {
         public override object Convert(object value)
         {
-            return $"{value} - CONVERTED!";
+            return $"{value}, _C_";
         }
 
         public override object ConvertBack(object value)
         {
-            throw new System.NotImplementedException();
+            return value;
+            //return $"{value}, _CB_";
         }
     }
 }

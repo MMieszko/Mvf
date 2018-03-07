@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +13,7 @@ namespace Client.Forms
     [MvfForm(typeof(FirstViewModel), typeof(FirstViewModelForm))]
     public class FirstViewModelForm : MvfForm<FirstViewModel>
     {
-        public FirstViewModelForm()
-        {
-            
+        private int test;
+
         }
-    }
 }

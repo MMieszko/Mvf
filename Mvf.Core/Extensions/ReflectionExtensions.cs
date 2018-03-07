@@ -26,7 +26,7 @@ namespace Mvf.Core.Extensions
 
             return result;
         }
-        
+
         public static TResult GetPropertyFromAttribute<TAtribute, TResult>(this PropertyInfo property, Func<TAtribute, TResult> selector)
               where TAtribute : Attribute
         {
@@ -40,6 +40,13 @@ namespace Mvf.Core.Extensions
 
         }
 
+        public static Type GetMvfConverterType(this PropertyInfo @this)
+        {
+            var result = @this.GetPropertyFromAttribute<MvfBindable, Type>(x => x.ConverterType);
+
+            return result;
+        }
+
         public static PropertyInfo GetProperty(this Control control, string propertyName)
         {
             var controlProprty = control.GetType().GetProperty(propertyName, BindingFlags.Public | BindingFlags.Instance);
@@ -50,36 +57,6 @@ namespace Mvf.Core.Extensions
         {
             var attriute = property.GetCustomAttributes(typeof(T), false).FirstOrDefault(x => x is T) as T;
             return attriute;
-        }
-
-        public static T CopyPropertyValues<T>(this T @this, T otherObject)
-            where T : class
-        {
-            var oType = @this.GetType();
-
-            foreach (var oProperty in oType.GetProperties())
-            {
-                try
-                {
-                    var oOldValue = oProperty.GetValue(@this, null);
-                    var oNewValue = oProperty.GetValue(otherObject, null);
-
-
-                    // this will handle the scenario where either value is null
-                    if (Equals(oOldValue, oNewValue)) continue;
-
-                    // Handle the display values when the underlying value is null
-                    var sOldValue = oOldValue?.ToString() ?? "null";
-                    var sNewValue = oNewValue?.ToString() ?? "null";
-
-                    System.Diagnostics.Debug.WriteLine("Property " + oProperty.Name + " was: " + sOldValue + "; is: " + sNewValue);
-                }
-                catch
-                {
-                    continue;
-                }
-            }
-            return @this;
         }
     }
 }

@@ -8,21 +8,22 @@ namespace Mvf.Core.Abstraction
 
         public abstract object ConvertBack(object value);
 
-        public static object GetConvertedValue(Type converter, object value, bool convertBack = false)
+        public static object GetConvertedValue(Type converter, object value)
         {
             if (converter == null) return value;
 
-            try
-            {
-                if (!(Activator.CreateInstance(converter) is MvfValueConverter conv)) return value;
+            if (!(Activator.CreateInstance(converter) is MvfValueConverter conv)) return value;
 
-                var result = convertBack ? conv.ConvertBack(value) : conv.Convert(value);
-                return result;
-            }
-            catch
-            {
-                return value;
-            }
+            return conv.Convert(value);
+        }
+
+        public static object GetConvertedBackValue(Type converter, object value)
+        {
+            if (converter == null) return value;
+
+            if (!(Activator.CreateInstance(converter) is MvfValueConverter conv)) return value;
+
+            return conv.ConvertBack(value);
         }
     }
 }

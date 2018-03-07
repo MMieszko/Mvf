@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using System.Windows.Input;
 using Mvf.Core.Attributes;
 using Mvf.Core.Bindings;
 using Mvf.Core.Commands;
@@ -44,7 +41,7 @@ namespace Mvf.Core.Abstraction
                 return;
             //TODO: throw new MvfException($"Could not bind {e.Property.Name} property because related control is not found");
 
-            BindingDispatcher.Bind(control, e.Property, e.Converter, e.Type);
+            BindingDispatcher.BindControl(control, e.Property, e.Converter, e.Type);
         }
 
         protected virtual void RaiseViewModelSet(TViewModel e)
@@ -61,7 +58,7 @@ namespace Mvf.Core.Abstraction
 
             this.ViewModel = MvfLocator<TViewModel, IMvfForm>.CreateViewModel(this);
             this.ViewModel.PropertyChanged += OnViewModelPropertyChanged;
-            
+
             RaiseViewModelSet(ViewModel);
         }
     }

@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Mvf.Core.Extensions
 {
@@ -21,10 +25,29 @@ namespace Mvf.Core.Extensions
             var obj = Activator.CreateInstance(argument.GetType());
             return obj.Equals(argument);
         }
-
-        public static object GetDefaultValue(this Type type)
+        
+        public static bool DeserializedEquals<T>(this T self, T to)
+            where T : class
         {
-            return type.IsValueType ? Activator.CreateInstance(type) : null;
+            return JsonConvert.SerializeObject(self) == JsonConvert.SerializeObject(to);
+        }
+
+        public static object ChangeType(this object value, Type desiredType)
+        {
+            var typeConverter = TypeDescriptor.GetConverter(desiredType);
+
+            object result;
+
+            try
+            {
+                result = typeConverter.ConvertTo(value, desiredType);
+            }
+            catch
+            {
+                result = desiredType.GetDefaultValue();
+            }
+
+            return result;
         }
     }
 }

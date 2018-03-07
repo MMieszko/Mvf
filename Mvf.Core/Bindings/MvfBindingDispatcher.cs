@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Mvf.Core.Abstraction;
 using Mvf.Core.Attributes;
 using Mvf.Core.Common;
 using Mvf.Core.Extensions;
+using Newtonsoft.Json;
 
 namespace Mvf.Core.Bindings
 {
@@ -19,38 +22,80 @@ namespace Mvf.Core.Bindings
         protected IEnumerable<Control> Controls;
         protected HashSet<PropertyInfo> BindingsHistory;
         protected IEnumerable<PropertyInfo> BindableProperties;
-        protected ICollection<RaiseableControl> RaiseableControls;
+        protected Dictionary<Control, Dictionary<PropertyInfo, object>> LastKnownValues;
+        protected CancellationTokenSource ChangesListenerTokenSource;
 
         private MvfBindingDispatcher()
         {
             this.BindingsHistory = new HashSet<PropertyInfo>();
             this.BindableProperties = new List<PropertyInfo>();
-            this.RaiseableControls = new List<RaiseableControl>();
+            this.LastKnownValues = new Dictionary<Control, Dictionary<PropertyInfo, object>>();
+            this.ChangesListenerTokenSource = new CancellationTokenSource();
         }
 
         public MvfBindingDispatcher(TViewModel viewModel, IMvfForm instance)
             : this()
         {
             this.ViewModel = viewModel;
-            if (!(instance is Form)) {/*Throw exceptoin*/}
+
+
+            if (!(instance is Form))
+            {
+                /*Throw exceptoin*/
+
+            }
+
             Form = instance;
-            this.Controls = (instance as Form).Controls.AsEnumerable();
+            this.Controls = ((Form)instance).Controls.AsEnumerable();
+            this.InitializeAsync();
+
+        }
+
+        private async Task InitializeAsync()
+        {
             InitializeBindableProperties();
-            InitializeStartupBindings();
-            StartListeningForChanges(this.Form as Form);
+            await InitStartupBindingsAsync();
+            InitialieLastKnownValues();
+            StartListeningForChanges();
+        }
+
+        private void InitialieLastKnownValues()
+        {
+            foreach (var control in this.Controls)
+            {
+                var connectedBindings = this.BindableProperties.Where(x => x.GetPropertyFromAttribute<MvfBindable, string>(b => b.ControlName) == control.Name);
+
+                var propertyValuePairs = new Dictionary<PropertyInfo, object>();
+
+                foreach (var controlBinding in connectedBindings)
+                {
+                    var controlPropetyNameBinding =
+                        controlBinding.GetPropertyFromAttribute<MvfBindable, string>(b => b.ControlPropertyName);
+
+                    if (controlPropetyNameBinding == null) continue;
+
+                    var controlPropertyValue = control.GetType().GetProperty(controlPropetyNameBinding)?.GetValue(control);
+
+                    propertyValuePairs.Add(controlBinding, controlPropertyValue);
+                }
+
+                if (propertyValuePairs.Any())
+                    this.LastKnownValues.Add(control, propertyValuePairs);
+            }
+
         }
 
         private void InitializeBindableProperties()
         {
             this.BindableProperties = ViewModel.GetType()
                 .GetProperties()
-                .HavingValues(ViewModel)
+                // .HavingValues(ViewModel)
                 .Where(x => x.HasAttribute<MvfBindable>())
                 .ToList()
                 .AsReadOnly();
         }
 
-        private void InitializeStartupBindings()
+        private async Task InitStartupBindingsAsync()
         {
             foreach (var control in this.Controls)
             {
@@ -60,31 +105,48 @@ namespace Mvf.Core.Bindings
 
                 if (!controlBindingProperties.Any()) continue;
 
-                var propetyValuePair = controlBindingProperties.Select(x => (x.GetPropertyFromAttribute<MvfBindable, PropertyInfo>(y => control.GetProperty(y.ControlPropertyName)), x.GetValue(ViewModel))).ToList();
-
-                this.RaiseableControls.Add(new RaiseableControl(control, this.Form as Form, propetyValuePair));
-
                 foreach (var bindingProperty in controlBindingProperties)
-                {
-                    this.Bind(control, bindingProperty);
+                    await this.BindControl(control, bindingProperty, bindingProperty.GetMvfConverterType());
 
+            }
+        }
+
+        private async void StartListeningForChanges()
+        {
+            while (true)
+            {
+                foreach (var control in this.Controls)
+                {
+                    var connectedBindings = this.BindableProperties.Where(x => x.GetPropertyFromAttribute<MvfBindable, string>(b => b.ControlName) == control.Name).ToList();
+
+                    foreach (var controlBinding in connectedBindings)
+                    {
+                        var controlPropertyname = controlBinding.GetPropertyFromAttribute<MvfBindable, string>(b => b.ControlPropertyName);
+
+                        if (string.IsNullOrEmpty(controlPropertyname)) continue;
+
+                        var currentvalue = control.GetProperty(controlPropertyname).GetValue(control);
+                        var lastKnownValue = LastKnownValues[control][controlBinding];
+
+                        if (currentvalue.DeserializedEquals(lastKnownValue)) continue;
+
+
+                        var value = await BindMvfProperty(controlBinding, control.GetProperty(controlPropertyname).GetValue(control),
+                            controlBinding.GetMvfConverterType());
+
+                        LastKnownValues[control][controlBinding] = value;
+                    }
+                }
+
+                try
+                {
+                    await Task.Delay(1, ChangesListenerTokenSource.Token);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
                 }
             }
-        }
-
-        public void StartListeningForChanges(Form form)
-        {
-            foreach (var control in RaiseableControls)
-            {
-                control.Run();
-                control.ValueChanged += OnControlChanged;
-            }
-        }
-
-        private void OnControlChanged(object s, PropertyChangedEventArgs e)
-        {
-            //TODO: Convert back
-            Bind(e.Control, e.Property);
         }
 
         public bool CanBind(BindingType type, PropertyInfo property)
@@ -98,30 +160,51 @@ namespace Mvf.Core.Bindings
             }
         }
 
-        public void Bind(Control control, PropertyInfo bindingProperty, Type converter = null, BindingType? type = null)
+        public async Task<object> BindMvfProperty(PropertyInfo property, object value, Type converter)
         {
-            if (type != null && !CanBind(type.Value, bindingProperty)) return;
+            var result = value.ChangeType(property.PropertyType);
+
+            if (converter != null)
+                result = MvfValueConverter.GetConvertedBackValue(converter, result);
+
+            await Task.Run(() => property.SetValue(ViewModel, result));
+
+            return value;
+        }
+
+        public async Task<bool> BindControl(Control control, PropertyInfo bindingProperty, Type converter = null, BindingType? type = null)
+        {
+            if (type != null && !CanBind(type.Value, bindingProperty)) return false;
 
             var controlProprty = control.GetProperty(bindingProperty.GetPropertyFromAttribute<MvfBindable, string>(x => x.ControlPropertyName));
 
             if (controlProprty == null)
                 throw new MvfException($"{bindingProperty.Name} is not known value of {control}");
 
-            control.BeginInvoke(new Action(() =>
+            return await Task.Factory.FromAsync(Invoke(), (result) => result.IsCompleted);
+
+            IAsyncResult Invoke()
             {
-                var updated = UpdateWithCustomUpdater(control, bindingProperty, converter);
+                return control.BeginInvoke(new Action(() =>
+                {
+                    var value = bindingProperty.GetValue(ViewModel);
 
-                if (updated) return;
+                    if (UpdateWithCustomUpdater(control, bindingProperty, value, converter)) return;
 
-                var value = GetCustomBindingValue(control, bindingProperty, converter);
-                controlProprty.SetValue(control, value);
-            }));
+                    if (converter != null)
+                        value = MvfValueConverter.GetConvertedValue(converter, value);
+
+                    controlProprty.SetValue(control, value.ChangeType(controlProprty.PropertyType));
+
+                }));
+            }
         }
 
-        public bool UpdateWithCustomUpdater(Control control, PropertyInfo bindingProperty, Type converter = null)
+        public bool UpdateWithCustomUpdater(Control control, PropertyInfo bindingProperty, object value, Type converter = null)
         {
             var givenValue = bindingProperty.GetValue(ViewModel);
-            var customPropertyUpdater = MvfCustomPropertyUpdaterFactory.Find(bindingProperty.GetPropertyFromAttribute<MvfBindable, string>(y => y.ControlPropertyName), control);
+
+            var customPropertyUpdater = GetCustomUpdater(bindingProperty, control);
 
             if (customPropertyUpdater == null) return false;
 
@@ -130,67 +213,12 @@ namespace Mvf.Core.Bindings
             return true;
         }
 
-        public object GetCustomBindingValue(Control control, PropertyInfo bindingProperty, Type converter = null)
+        public MvfCustomPropertyUpdater GetCustomUpdater(PropertyInfo bindingProperty, Control control)
         {
-            var givenValue = bindingProperty.GetValue(ViewModel);
-            var customPropertyBinding = MvfCustomPropertyBindingFactory.Find(bindingProperty.GetPropertyFromAttribute<MvfBindable, string>(y => y.ControlPropertyName), control);
+            var customPropertyUpdater = MvfCustomPropertyUpdaterFactory.Find(bindingProperty.GetPropertyFromAttribute<MvfBindable, string>(y => y.ControlPropertyName), control);
 
-            var value = customPropertyBinding != null ? customPropertyBinding.ReturnValueImplementation(givenValue, control) : givenValue;
-
-            return converter == null
-                ? value
-                : MvfValueConverter.GetConvertedValue(converter, value);
+            return customPropertyUpdater;
         }
     }
 
-    public sealed class RaiseableControl
-    {
-        public Control Control { get; }
-        public Form Form { get; }
-        public List<(PropertyInfo controlProperty, object value)> NameValue { get; }
-        public event EventHandler<PropertyChangedEventArgs> ValueChanged;
-
-        public RaiseableControl(Control control, Form form,
-            List<(PropertyInfo controlProperty, object value)> nameValue)
-        {
-            Form = form;
-            Control = control;
-            this.NameValue = nameValue;
-        }
-
-        private void RaiseValueChanged(PropertyChangedEventArgs e)
-        {
-            ValueChanged?.Invoke(this, e);
-        }
-
-        public async void Run()
-        {
-            foreach (var pair in this.NameValue)
-            {
-                var currentValue = pair.controlProperty.GetValue(Control);
-                 //TODO: IComaprable or smth...
-                if (currentValue != pair.value)
-                    RaiseValueChanged(new PropertyChangedEventArgs(Control, pair.controlProperty, pair.value, currentValue));
-            }
-
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            Run();
-        }
-    }
-
-    public class PropertyChangedEventArgs : EventArgs
-    {
-        public PropertyInfo Property { get; }
-        public object OldValue { get; }
-        public object NewValue { get; }
-        public Control Control { get; }
-
-        public PropertyChangedEventArgs(Control control, PropertyInfo propertyName, object oldValue, object newValue)
-        {
-            Property = propertyName;
-            OldValue = oldValue;
-            NewValue = newValue;
-            Control = control;
-        }
-    }
 }

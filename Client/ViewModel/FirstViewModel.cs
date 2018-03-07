@@ -12,13 +12,14 @@ namespace Client.ViewModel
 {
     public class FirstViewModel : MvfViewModel
     {
-        private string _name = "Rysiek";
-        private string _surname = "A chuj cie to";
+        private string _name = "Imie";
+        private string _surname = "Nazwisko";
         private int _wiek;
         private MvfObserfableCollection<string> _names;
 
         [MvfCommandable(nameof(Button.Click), "button1")]
         public ICommand FirstCommand { get; set; }
+
         [MvfBindable(nameof(TextBox.Text), "ImieTesxtBox", typeof(MyFirstConverter))]
         public string Name
         {
@@ -29,6 +30,7 @@ namespace Client.ViewModel
                 RaisePropertyChanged();
             }
         }
+
         [MvfBindable(nameof(TextBox.Text), "NazwiskoTextBox")]
         public string Surname
         {
@@ -39,6 +41,7 @@ namespace Client.ViewModel
                 RaisePropertyChanged();
             }
         }
+
         [MvfBindable(nameof(TextBox.Text), "WiekTextbox")]
         public int Wiek
         {
@@ -49,6 +52,7 @@ namespace Client.ViewModel
                 RaisePropertyChanged();
             }
         }
+
         [MvfBindable(nameof(ListView.Items), "FirstListView")]
         public MvfObserfableCollection<string> Names
         {
@@ -68,7 +72,7 @@ namespace Client.ViewModel
 
         public FirstViewModel()
         {
-            //DoitAsync();
+            DoitAsync();
             FirstCommand = new MvfCommand(FirstCommandImpl);
         }
 
@@ -79,18 +83,8 @@ namespace Client.ViewModel
 
         private async void DoitAsync()
         {
-            await Task.Delay(TimeSpan.FromSeconds(1));
-
-            //Wiek = 150;
-
-            await Task.Delay(TimeSpan.FromSeconds(5));
-
-            Name = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-
-            await Task.Delay(TimeSpan.FromSeconds(3));
-
-            Surname = "BBBBBBBBBBBBBBB";
-
+            await Task.Delay(TimeSpan.FromMinutes(1));
+            
 
         }
     }

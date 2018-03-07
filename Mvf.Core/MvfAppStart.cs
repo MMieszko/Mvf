@@ -22,8 +22,6 @@ namespace Mvf.Core
             this._kernel = new StandardKernel();
         }
 
-        protected virtual void RegiesterCustomBindings() { }
-
         protected virtual void RegiesterBindingUpdater()
         {
             MvfCustomPropertyUpdaterFactory.Register(new MvfObservableCollectionBindingUpdater(nameof(ListView.Items), typeof(ListView)));
@@ -34,13 +32,12 @@ namespace Mvf.Core
         {
             InitializeIoC(_kernel);
             RegiesterBindingUpdater();
-            RegiesterCustomBindings();
             Application.Run(startupForm);
         }
 
         protected virtual void InitializeIoC(StandardKernel kernel)
         {
-            
+
         }
     }
 }

@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -55,16 +58,15 @@
     </Compile>
     <Compile Include="Abstraction\MvfViewModel.cs" />
     <Compile Include="Attributes\MvfCommandable.cs" />
+    <Compile Include="Bindings\MvfCustomBinding.cs" />
     <Compile Include="Bindings\MvfCustomPropertyUpdater.cs" />
     <Compile Include="Bindings\MvfCustomPropertyUpdaterFactory.cs" />
-    <Compile Include="Bindings\MvfCustomBinding.cs" />
     <Compile Include="Commands\MvfCommandDispatcher.cs" />
     <Compile Include="Commands\MvfCommand.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="MvfAppStart.cs" />
     <Compile Include="Attributes\MvfBindable.cs" />
     <Compile Include="Attributes\MvfForm.cs" />
-    <Compile Include="Bindings\MvfCustomPropertyBinding.cs" />
-    <Compile Include="Bindings\MvfCustomPropertyBindingFactory.cs" />
     <Compile Include="Common\BindingType.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\MvfException.cs" />
