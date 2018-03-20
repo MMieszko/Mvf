@@ -53,6 +53,9 @@
   <ItemGroup>
     <Compile Include="Abstraction\IMvfForm.cs" />
     <Compile Include="Abstraction\IMvfViewModel.cs" />
+    <Compile Include="Abstraction\MvfBindingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Abstraction\MvfForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -63,6 +66,7 @@
     <Compile Include="Bindings\MvfCustomPropertyUpdaterFactory.cs" />
     <Compile Include="Commands\MvfCommandDispatcher.cs" />
     <Compile Include="Commands\MvfCommand.cs" />
+    <Compile Include="Common\BindingProperty.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="MvfAppStart.cs" />
     <Compile Include="Attributes\MvfBindable.cs" />

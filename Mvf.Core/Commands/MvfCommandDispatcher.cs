@@ -13,12 +13,13 @@ namespace Mvf.Core.Commands
     {
         public TViewModel ViewModel { get; }
 
-        public MvfCommandDispatcher(TViewModel viewModel)
+        public MvfCommandDispatcher(TViewModel viewModel, IEnumerable<Control> commandableControls)
         {
             this.ViewModel = viewModel;
+            this.Initialize(commandableControls);
         }
 
-        public void Initialize(IEnumerable<Control> controls)
+        private void Initialize(IEnumerable<Control> controls)
         {
             var properties = ViewModel.GetType()
                 .GetProperties()
@@ -31,7 +32,7 @@ namespace Mvf.Core.Commands
                 var eventName = commandProperty.GetPropertyFromAttribute<MvfCommandable, string>(x => x.EventName);
                 var mvfCommand = commandProperty.GetValue(ViewModel, null) as MvfCommand;
 
-                
+
                 var control = controls.FirstOrDefault(x => x.Name == controlName);
 
                 if (control == null || mvfCommand == null) continue;
@@ -39,7 +40,7 @@ namespace Mvf.Core.Commands
                 var @event = control.GetType().GetEvent(eventName);
 
                 @event.AddEventHandler(control,
-                    Delegate.CreateDelegate(@event.EventHandlerType, mvfCommand, mvfCommand.GetType().GetMethod(nameof(MvfCommand.ExecuteImplementation))));
+                    Delegate.CreateDelegate(@event.EventHandlerType, mvfCommand, mvfCommand.GetType().GetMethod(nameof(MvfCommand.ExecuteImplementation)) ?? throw new InvalidOperationException("Could not find execution implementations")));
 
             }
         }

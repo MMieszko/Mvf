@@ -73,6 +73,7 @@ namespace Client.ViewModel
         public FirstViewModel()
         {
             DoitAsync();
+            Names = new MvfObserfableCollection<string>();
             FirstCommand = new MvfCommand(FirstCommandImpl);
         }
 

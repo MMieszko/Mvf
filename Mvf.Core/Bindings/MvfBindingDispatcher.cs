@@ -18,135 +18,13 @@ namespace Mvf.Core.Bindings
         where TViewModel : IMvfViewModel
     {
         public TViewModel ViewModel;
-        protected IMvfForm Form;
-        protected IEnumerable<Control> Controls;
-        protected HashSet<PropertyInfo> BindingsHistory;
-        protected IEnumerable<PropertyInfo> BindableProperties;
-        protected Dictionary<Control, Dictionary<PropertyInfo, object>> LastKnownValues;
-        protected CancellationTokenSource ChangesListenerTokenSource;
 
-        private MvfBindingDispatcher()
+        protected HashSet<PropertyInfo> BindingsHistory;
+
+        public MvfBindingDispatcher(TViewModel viewModel)
         {
             this.BindingsHistory = new HashSet<PropertyInfo>();
-            this.BindableProperties = new List<PropertyInfo>();
-            this.LastKnownValues = new Dictionary<Control, Dictionary<PropertyInfo, object>>();
-            this.ChangesListenerTokenSource = new CancellationTokenSource();
-        }
-
-        public MvfBindingDispatcher(TViewModel viewModel, IMvfForm instance)
-            : this()
-        {
             this.ViewModel = viewModel;
-
-
-            if (!(instance is Form))
-            {
-                /*Throw exceptoin*/
-
-            }
-
-            Form = instance;
-            this.Controls = ((Form)instance).Controls.AsEnumerable();
-            this.InitializeAsync();
-
-        }
-
-        private async Task InitializeAsync()
-        {
-            InitializeBindableProperties();
-            await InitStartupBindingsAsync();
-            InitialieLastKnownValues();
-            StartListeningForChanges();
-        }
-
-        private void InitialieLastKnownValues()
-        {
-            foreach (var control in this.Controls)
-            {
-                var connectedBindings = this.BindableProperties.Where(x => x.GetPropertyFromAttribute<MvfBindable, string>(b => b.ControlName) == control.Name);
-
-                var propertyValuePairs = new Dictionary<PropertyInfo, object>();
-
-                foreach (var controlBinding in connectedBindings)
-                {
-                    var controlPropetyNameBinding =
-                        controlBinding.GetPropertyFromAttribute<MvfBindable, string>(b => b.ControlPropertyName);
-
-                    if (controlPropetyNameBinding == null) continue;
-
-                    var controlPropertyValue = control.GetType().GetProperty(controlPropetyNameBinding)?.GetValue(control);
-
-                    propertyValuePairs.Add(controlBinding, controlPropertyValue);
-                }
-
-                if (propertyValuePairs.Any())
-                    this.LastKnownValues.Add(control, propertyValuePairs);
-            }
-
-        }
-
-        private void InitializeBindableProperties()
-        {
-            this.BindableProperties = ViewModel.GetType()
-                .GetProperties()
-                // .HavingValues(ViewModel)
-                .Where(x => x.HasAttribute<MvfBindable>())
-                .ToList()
-                .AsReadOnly();
-        }
-
-        private async Task InitStartupBindingsAsync()
-        {
-            foreach (var control in this.Controls)
-            {
-                var controlBindingProperties = this.BindableProperties
-                    .Where(x => x.GetPropertyFromAttribute<MvfBindable, string>(y => y.ControlName) == control.Name)
-                    .ToList();
-
-                if (!controlBindingProperties.Any()) continue;
-
-                foreach (var bindingProperty in controlBindingProperties)
-                    await this.BindControl(control, bindingProperty, bindingProperty.GetMvfConverterType());
-
-            }
-        }
-
-        private async void StartListeningForChanges()
-        {
-            while (true)
-            {
-                foreach (var control in this.Controls)
-                {
-                    var connectedBindings = this.BindableProperties.Where(x => x.GetPropertyFromAttribute<MvfBindable, string>(b => b.ControlName) == control.Name).ToList();
-
-                    foreach (var controlBinding in connectedBindings)
-                    {
-                        var controlPropertyname = controlBinding.GetPropertyFromAttribute<MvfBindable, string>(b => b.ControlPropertyName);
-
-                        if (string.IsNullOrEmpty(controlPropertyname)) continue;
-
-                        var currentvalue = control.GetProperty(controlPropertyname).GetValue(control);
-                        var lastKnownValue = LastKnownValues[control][controlBinding];
-
-                        if (currentvalue.DeserializedEquals(lastKnownValue)) continue;
-
-
-                        var value = await BindMvfProperty(controlBinding, control.GetProperty(controlPropertyname).GetValue(control),
-                            controlBinding.GetMvfConverterType());
-
-                        LastKnownValues[control][controlBinding] = value;
-                    }
-                }
-
-                try
-                {
-                    await Task.Delay(1, ChangesListenerTokenSource.Token);
-                }
-                catch (TaskCanceledException)
-                {
-                    break;
-                }
-            }
         }
 
         public bool CanBind(BindingType type, PropertyInfo property)
@@ -189,6 +67,9 @@ namespace Mvf.Core.Bindings
                 {
                     var value = bindingProperty.GetValue(ViewModel);
 
+                    //TODO ??
+                    if (value == null) return;
+
                     if (UpdateWithCustomUpdater(control, bindingProperty, value, converter)) return;
 
                     if (converter != null)
@@ -220,5 +101,4 @@ namespace Mvf.Core.Bindings
             return customPropertyUpdater;
         }
     }
-
 }
