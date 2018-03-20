@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Mvf.Core.Abstraction
+namespace Mvf.Core.Converters
 {
     public abstract class MvfValueConverter
     {

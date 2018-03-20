@@ -16,8 +16,9 @@ namespace Mvf.Core.PropertyUpdaters
         public override object UpdatedControlImplementation(object value, object control)
         {
             var listView = control as ListView;
-            var values = value as IMvfObservableCollection;
 
+            if (!(value is IMvfObservableCollection values))
+                throw new InvalidCastException($"Could not cast {value} to {nameof(IMvfObservableCollection)} while updating {control.ToString()}");
 
             values.CollectionChanged += (s, a) => OnCollectionChanged(listView, s, a);
 

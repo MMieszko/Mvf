@@ -76,7 +76,7 @@
     <Compile Include="Common\MvfException.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
-    <Compile Include="Abstraction\MvfValueConverter.cs" />
+    <Compile Include="Converters\MvfValueConverter.cs" />
     <Compile Include="Extensions\ControlsExtensions.cs" />
     <Compile Include="Locator\MvfLocator.cs" />
     <Compile Include="Bindings\MvfBindingDispatcher.cs" />
