@@ -8,5 +8,7 @@ namespace Mvf.Core.Abstraction
         event EventHandler<BindingEventArgs> PropertyChanged;
 
         void OnViewInitialized();
+
+        void Navigate<TViewModel>() where TViewModel : IMvfViewModel;
     }
 }

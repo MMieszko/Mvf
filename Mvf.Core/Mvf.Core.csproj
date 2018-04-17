@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Abstraction\IMvfForm.cs" />
     <Compile Include="Abstraction\IMvfViewModel.cs" />
+    <Compile Include="Abstraction\IVolatileView.cs" />
     <Compile Include="Abstraction\MvfBindingForm.cs">
       <SubType>Form</SubType>
     </Compile>

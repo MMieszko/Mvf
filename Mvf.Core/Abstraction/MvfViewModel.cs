@@ -6,18 +6,32 @@ using System.Windows.Forms;
 using Mvf.Core.Attributes;
 using Mvf.Core.Common;
 using Mvf.Core.Extensions;
+using Mvf.Core.Locator;
 
 namespace Mvf.Core.Abstraction
 {
     public abstract class MvfViewModel : IMvfViewModel
     {
         public event EventHandler<BindingEventArgs> PropertyChanged;
-        
+
         public virtual void OnViewInitialized()
         {
 
         }
 
+        public void Navigate<TViewModel>() 
+            where TViewModel : IMvfViewModel
+        {
+            if (typeof(IVolatileView).IsAssignableFrom(typeof(TViewModel)))
+            {
+                
+            }
+            else
+            {
+                MvfLocator.GetFormOrDefault<>()
+            }
+        }
+        
         protected void RaisePropertyChanged([CallerMemberName] string callerName = "")
         {
             var bindingsArgs = GetBindingEventArgs(new StackTrace().GetFrame(1).GetMethod());

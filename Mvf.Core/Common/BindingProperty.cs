@@ -21,6 +21,8 @@ namespace Mvf.Core.Common
 
         public static FieldInfo GetBackingField(object obj, string propertyName)
         {
+
+
             return obj.GetType().GetField($"<{propertyName}>k__BackingField", BindingFlags.Instance | BindingFlags.NonPublic);
         }
     }

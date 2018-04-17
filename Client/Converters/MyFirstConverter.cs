@@ -1,13 +1,12 @@
-﻿using Mvf.Core.Abstraction;
-using Mvf.Core.Converters;
+﻿using Mvf.Core.Converters;
 
-namespace Client
+namespace Client.Converters
 {
     public class MyFirstConverter : MvfValueConverter
     {
         public override object Convert(object value)
         {
-            return $"{value}, _C_";
+            return $"{value},1";
         }
 
         public override object ConvertBack(object value)

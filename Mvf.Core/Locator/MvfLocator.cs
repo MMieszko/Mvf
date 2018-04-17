@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using System.Windows.Forms;
+using System.Windows.Input;
 using Mvf.Core.Abstraction;
 
 namespace Mvf.Core.Locator
 {
-    internal static class MvfLocator<TViewModel, TForm>
-        where TViewModel : IMvfViewModel
-        where TForm : IMvfForm
+    internal static class MvfLocator
     {
         private static readonly Dictionary<IMvfForm, IMvfViewModel> Pairs;
 
@@ -16,21 +16,39 @@ namespace Mvf.Core.Locator
             Pairs = new Dictionary<IMvfForm, IMvfViewModel>();
         }
 
-        public static IMvfViewModel GetViewModel(TForm form)
+        public static bool HasForm(Form form) => Pairs.ContainsKey(form as IMvfForm ?? throw new InvalidOperationException($"Form must implement {typeof(IMvfForm).Name}"));
+        public static bool HasViewModel(IMvfViewModel viewModel) => Pairs.ContainsValue(viewModel);
+
+        public static TViewModel GetViewModel<TViewModel>(IMvfForm form)
+            where TViewModel : IMvfViewModel
         {
-            return Pairs.ContainsKey(form) ? Pairs[form] : default(TViewModel);
+            if (Pairs.ContainsKey(form))
+                return (TViewModel)Pairs[form];
+
+            throw new Exception($"Could not find coressponded view model for given form {form.GetType().Name}");
         }
 
-        public static TViewModel CreateViewModel(TForm form)
+        public static Form GetForm(IMvfViewModel viewModel)
         {
-            var vm = Activator.CreateInstance<TViewModel>();
-            Pairs.Add(form, vm);
-            return vm;
+            if (Pairs.ContainsValue(viewModel))
+                return (Form)Pairs.First(x => x.Value == viewModel).Key;
+
+            throw new Exception($"Could not find coressponded form for given view model {viewModel.GetType().Name}");
         }
 
-        public static void RemoveViewModel(TForm form)
+        public static TViewModel CreateViewModel<TViewModel>()
+            where TViewModel : IMvfViewModel
         {
-            Pairs.Remove(form);
+            var viewModel = Activator.CreateInstance<TViewModel>();
+
+            return viewModel;
+
+            //var alreadyExisting = Pairs.FirstOrDefault(x => x.Value is TViewModel);
+
+            //if (alreadyExisting != null)
+            //{
+
+            // }
         }
     }
 }

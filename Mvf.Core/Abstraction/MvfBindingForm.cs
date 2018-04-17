@@ -9,6 +9,7 @@ using Mvf.Core.Attributes;
 using Mvf.Core.Bindings;
 using Mvf.Core.Commands;
 using Mvf.Core.Common;
+using Mvf.Core.Converters;
 using Mvf.Core.Extensions;
 using Mvf.Core.Locator;
 
@@ -46,6 +47,8 @@ namespace Mvf.Core.Abstraction
 
             await InitializeStartupBindings();
             StartListeningForChanges();
+
+            ViewModel.OnViewInitialized();
         }
 
         protected virtual async void OnViewModelPropertyChanged(object sender, BindingEventArgs e)
@@ -66,7 +69,7 @@ namespace Mvf.Core.Abstraction
             if (attribute == null)
                 throw new CustomAttributeFormatException($"Could not find {nameof(MvfForm)} attribute over the {this.GetType().Name} form");
 
-            this.ViewModel = MvfLocator<TViewModel, IMvfForm>.CreateViewModel(this);
+            this.ViewModel = MvfLocator.GetViewModel<TViewModel>(this);
             this.ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
             RaiseViewModelSet(ViewModel);
@@ -113,12 +116,15 @@ namespace Mvf.Core.Abstraction
 
                         if (currentvalue.DeserializedEquals(lastKnownValue)) continue;
 
+                        var value = await BindingDispatcher.BindMvfProperty(controlBinding.PropertyInfo, currentvalue, controlBinding.PropertyInfo.GetMvfConverterType());
 
-                        //SET THIS VALUE TO PRIVATE BACK FIELD OF THIS PROPERTY DUE TO RECURSION
-                        //var value = await BindMvfProperty(controlBinding, control.GetProperty(controlPropertyname).GetValue(control),
-                        //    controlBinding.GetMvfConverterType());
+                        if (controlBinding.PropertyInfo.GetMvfConverterType() != null)
+                        {
+                            value = MvfValueConverter.GetConvertedValue(controlBinding.PropertyInfo.GetMvfConverterType(),
+                                currentvalue);
+                        }
 
-                        //LastKnownValues[control][controlBinding] = value;
+                        LastKnownValues[control][controlBinding.PropertyInfo] = value;
                     }
                 }
 

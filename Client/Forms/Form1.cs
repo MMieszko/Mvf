@@ -14,7 +14,7 @@ namespace Client.Forms
         {
             InitializeComponent();
             this.Name = " FORM 1 ";
-            FirstListView.View = View.List;
+            AllVegetablesListView.View = View.List;
         }
     }
 }

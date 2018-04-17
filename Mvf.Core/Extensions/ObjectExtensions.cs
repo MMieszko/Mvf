@@ -25,7 +25,7 @@ namespace Mvf.Core.Extensions
             var obj = Activator.CreateInstance(argument.GetType());
             return obj.Equals(argument);
         }
-        
+
         public static bool DeserializedEquals<T>(this T self, T to)
             where T : class
         {
@@ -42,12 +42,28 @@ namespace Mvf.Core.Extensions
             {
                 result = typeConverter.ConvertTo(value, desiredType);
             }
-            catch
+            catch(Exception ex)
             {
-                result = desiredType.GetDefaultValue();
+                //result = desiredType.GetDefaultValue();
+                result = value;
             }
 
             return result;
+        }
+
+        public static bool HasTheSameValuesAs(this object @this, object other)
+        {
+            var haveSameData = false;
+
+            foreach (var prop in @this.GetType().GetProperties())
+            {
+                haveSameData = prop.GetValue(@this, null).Equals(prop.GetValue(other, null));
+
+                if (!haveSameData)
+                    break;
+            }
+
+            return haveSameData;
         }
     }
 }

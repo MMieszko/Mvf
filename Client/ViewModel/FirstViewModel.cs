@@ -1,65 +1,72 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Mvf.Core;
 using Mvf.Core.Abstraction;
 using Mvf.Core.Attributes;
-using Mvf.Core.Common;
 
 namespace Client.ViewModel
 {
     public class FirstViewModel : MvfViewModel
     {
-        private string _name = "Imie";
-        private string _surname = "Nazwisko";
-        private int _wiek;
-        private MvfObserfableCollection<string> _names;
+        private MvfObserfableCollection<string> _vegetables;
+        private MvfObserfableCollection<string> _cartListView;
+        private double _bill;
+        private Color _billColor;
+
+        public string SelectedVegetable { get; set; }
 
         [MvfCommandable(nameof(Button.Click), "button1")]
-        public ICommand FirstCommand { get; set; }
+        public ICommand AddToCart { get; set; }
 
-        [MvfBindable(nameof(TextBox.Text), "ImieTesxtBox", typeof(MyFirstConverter))]
-        public string Name
+        [MvfCommandable(nameof(ListView.SelectedIndexChanged), "AllVegetablesListView")]
+        public ICommand SelectedVegetableChanged { get; set; }
+
+        [MvfCommandable(nameof(Button.Click), "GoToPayButton")]
+        public ICommand GoToPayCommand { get; set; }
+
+        [MvfBindable(nameof(ListView.Items), "AllVegetablesListView")]
+        public MvfObserfableCollection<string> Vegetables
         {
-            get => _name;
+            get => _vegetables;
             set
             {
-                _name = value;
+                _vegetables = value;
                 RaisePropertyChanged();
             }
         }
 
-        [MvfBindable(nameof(TextBox.Text), "NazwiskoTextBox")]
-        public string Surname
+        [MvfBindable(nameof(ListView.Items), "SelectedVegetablesListView")]
+        public MvfObserfableCollection<string> Cart
         {
-            get => _surname;
+            get => _cartListView;
             set
             {
-                _surname = value;
+                _cartListView = value;
                 RaisePropertyChanged();
             }
         }
 
-        [MvfBindable(nameof(TextBox.Text), "WiekTextbox")]
-        public int Wiek
+        [MvfBindable(nameof(Label.Text), "BillLabel")]
+        public double Bill
         {
-            get => _wiek;
+            get { return _bill; }
             set
             {
-                _wiek = value;
+                _bill = value;
                 RaisePropertyChanged();
             }
         }
 
-        [MvfBindable(nameof(ListView.Items), "FirstListView")]
-        public MvfObserfableCollection<string> Names
+        [MvfBindable(nameof(Label.ForeColor), "BillLabel")]
+        public Color BillColor
         {
-            get => _names;
+            get => _billColor;
             set
             {
-                _names = value;
+                _billColor = value;
                 RaisePropertyChanged();
             }
         }
@@ -67,26 +74,47 @@ namespace Client.ViewModel
         public override void OnViewInitialized()
         {
             base.OnViewInitialized();
-            this.Names = new MvfObserfableCollection<string> { "T", "E", "S", "T" };
+            this.Vegetables = new MvfObserfableCollection<string> { "MARCHEWKA", "ZIEMNIAK", "BURAK", "RZODKIEWKA", "KAPUSTA", "GROCH", "FASOLA", "BRUKSELKA" };
+            this.BillColor = Color.Gray;
         }
 
         public FirstViewModel()
         {
-            DoitAsync();
-            Names = new MvfObserfableCollection<string>();
-            FirstCommand = new MvfCommand(FirstCommandImpl);
+            Vegetables = new MvfObserfableCollection<string>();
+            Cart = new MvfObserfableCollection<string>();
+            AddToCart = new MvfCommand(OnAddToCart);
+            SelectedVegetableChanged = new MvfCommand(OnVegetableChanged);
+            GoToPayCommand = new MvfCommand(OnGoToPay);
         }
 
-        private void FirstCommandImpl(object o)
+        private void OnGoToPay(object o)
         {
-            this.Names.Add("Nowy dodany kolega");
+            throw new NotImplementedException();
         }
 
-        private async void DoitAsync()
+        private void OnVegetableChanged(object o)
         {
-            await Task.Delay(TimeSpan.FromMinutes(1));
-            
+            var lw = (ListView)o;
 
+            if (lw.SelectedItems.Count == 0) return;
+
+            var selectedIndex = lw.SelectedItems[0].Index;
+
+            this.SelectedVegetable = Vegetables[selectedIndex];
+        }
+
+        private void OnAddToCart(object o)
+        {
+            if (string.IsNullOrEmpty(this.SelectedVegetable))
+            {
+                MessageBox.Show(@"Nie wybrano wrzywa do dodania");
+                return;
+            }
+
+            this.Cart.Add(this.SelectedVegetable);
+            this.Bill += Math.Round(new Random().NextDouble() * (3.1 - 0.1) + 0.1);
+
+            this.BillColor = this.Bill > 2 ? Color.Red : Color.Green;
         }
     }
 }
