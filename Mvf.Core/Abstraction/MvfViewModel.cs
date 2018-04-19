@@ -19,19 +19,31 @@ namespace Mvf.Core.Abstraction
 
         }
 
-        public void Navigate<TViewModel>() 
+        public void Navigate<TViewModel>()
             where TViewModel : IMvfViewModel
         {
             if (typeof(IVolatileView).IsAssignableFrom(typeof(TViewModel)))
             {
-                
+                var form = MvfLocator.CreatePair<TViewModel>();
+
+                form.Show();
             }
             else
             {
-                MvfLocator.GetFormOrDefault<>()
+                if (MvfLocator.HasForm<TViewModel>())
+                {
+                    var form = MvfLocator.GetForm<TViewModel>();
+                    form.Show();
+                }
+                else
+                {
+                    var form = MvfLocator.CreatePair<TViewModel>();
+
+                    form.Show();
+                }
             }
         }
-        
+
         protected void RaisePropertyChanged([CallerMemberName] string callerName = "")
         {
             var bindingsArgs = GetBindingEventArgs(new StackTrace().GetFrame(1).GetMethod());

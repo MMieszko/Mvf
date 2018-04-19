@@ -13,7 +13,6 @@ namespace Client.Forms
     [MvfForm(typeof(FirstViewModel), typeof(FirstViewModelForm))]
     public class FirstViewModelForm : MvfForm<FirstViewModel>
     {
-        private int test;
-
-        }
+        
+    }
 }

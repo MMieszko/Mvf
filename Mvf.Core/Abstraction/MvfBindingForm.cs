@@ -69,7 +69,10 @@ namespace Mvf.Core.Abstraction
             if (attribute == null)
                 throw new CustomAttributeFormatException($"Could not find {nameof(MvfForm)} attribute over the {this.GetType().Name} form");
 
-            this.ViewModel = MvfLocator.GetViewModel<TViewModel>(this);
+            this.ViewModel = MvfLocator.HasViewModel<TViewModel>()
+                ? MvfLocator.GetViewModel<TViewModel>(this)
+                : MvfLocator.CreateViewModel<TViewModel>(this);
+
             this.ViewModel.PropertyChanged += OnViewModelPropertyChanged;
 
             RaiseViewModelSet(ViewModel);

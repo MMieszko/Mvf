@@ -89,7 +89,7 @@ namespace Client.ViewModel
 
         private void OnGoToPay(object o)
         {
-            throw new NotImplementedException();
+            Navigate<SummaryViewModel>();
         }
 
         private void OnVegetableChanged(object o)
